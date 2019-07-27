@@ -1,8 +1,10 @@
 package com.carparking.api.Controllers;
 
+import com.carparking.api.Entity.Booking;
 import com.carparking.api.Entity.Parking;
 import com.carparking.api.Entity.User;
 import com.carparking.api.Service.IParkingService;
+import com.carparking.api.Service.IBookingService;
 import com.carparking.api.Service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +26,9 @@ public class mainController {
 
     @Autowired
     IParkingService parkingService;
+
+    @Autowired
+    IBookingService bookingService;
 
 
     @RequestMapping("/")
@@ -106,6 +111,10 @@ public class mainController {
 
     //--------------------------------------------- Booking starts here ----------------------------------------------
 
+    @RequestMapping(method = RequestMethod.POST, value = "/booking/new")
+    public @ResponseBody Booking registerBooking(@RequestBody Booking booking)throws IOException {
+        return bookingService.saveBooking(booking);
+    }
     //--------------------------------------------- History starts here ----------------------------------------------
 }
 

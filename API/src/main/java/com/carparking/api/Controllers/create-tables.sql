@@ -28,8 +28,8 @@ ALTER TABLE public.parking
 CREATE TABLE public.bookings
 (
   bookingId integer NOT NULL DEFAULT nextval('bookings_bookingId_seq'::regclass),
-  inTime timestamp NOT NULL,
-  outTime timestamp,
+  inTime long NOT NULL,
+  outTime long,
   inOtp integer NOT NULL,
   outOtp integer,
   slotDuration integer NOT NULL,
@@ -100,8 +100,8 @@ CREATE TABLE public.parking
 CREATE TABLE public.booking
 (
   booking_id integer NOT NULL primary key,
-  in_time timestamp NOT NULL,
-  out_time timestamp,
+  in_time long NOT NULL,
+  out_time long,
   in_otp integer NOT NULL,
   out_otp integer,
   slot_duration integer NOT NULL,

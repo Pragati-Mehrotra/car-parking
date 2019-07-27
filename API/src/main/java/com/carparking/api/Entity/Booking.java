@@ -13,10 +13,10 @@ public class Booking {
     private Integer bookingId;
 
     @Column(name = "in_time")
-    private Timestamp inTime;
+    private Long inTime;
 
     @Column(name = "out_time")
-    private Timestamp outTime;
+    private Long outTime;
 
     @Column(name = "in_otp")
     private Integer inOtp;
@@ -34,12 +34,12 @@ public class Booking {
     private Double bill;
 
     @Column(name = "user_id")
-    private Integer UserId;
+    private Integer userId;
 
     @Column(name = "parking_id")
     private Integer parkingId;
 
-    public Booking(Timestamp inTime, Timestamp outTime, Integer inOtp, Integer outOpt, Integer slotDuration, String status, Double bill, Integer userId, Integer parkingId) {
+    public Booking(Long inTime, Long outTime, Integer inOtp, Integer outOpt, Integer slotDuration, String status, Double bill, Integer userId, Integer parkingId) {
         this.inTime = inTime;
         this.outTime = outTime;
         this.inOtp = inOtp;
@@ -47,11 +47,11 @@ public class Booking {
         this.slotDuration = slotDuration;
         this.status = status;
         this.bill = bill;
-        UserId = userId;
+        this.userId = userId;
         this.parkingId = parkingId;
     }
 
-    public Booking(Integer bookingId, Timestamp inTime, Timestamp outTime, Integer inOtp, Integer outOpt, Integer slotDuration, String status, Double bill, Integer userId, Integer parkingId) {
+    public Booking(Integer bookingId, Long inTime, Long outTime, Integer inOtp, Integer outOpt, Integer slotDuration, String status, Double bill, Integer userId, Integer parkingId) {
         this.bookingId = bookingId;
         this.inTime = inTime;
         this.outTime = outTime;
@@ -60,7 +60,7 @@ public class Booking {
         this.slotDuration = slotDuration;
         this.status = status;
         this.bill = bill;
-        UserId = userId;
+        this.userId = userId;
         this.parkingId = parkingId;
     }
 
@@ -76,19 +76,19 @@ public class Booking {
         this.bookingId = bookingId;
     }
 
-    public Timestamp getInTime() {
+    public Long getInTime() {
         return inTime;
     }
 
-    public void setInTime(Timestamp inTime) {
+    public void setInTime(Long inTime) {
         this.inTime = inTime;
     }
 
-    public Timestamp getOutTime() {
+    public Long getOutTime() {
         return outTime;
     }
 
-    public void setOutTime(Timestamp outTime) {
+    public void setOutTime(Long outTime) {
         this.outTime = outTime;
     }
 
@@ -133,11 +133,11 @@ public class Booking {
     }
 
     public Integer getUserId() {
-        return UserId;
+        return userId;
     }
 
     public void setUserId(Integer userId) {
-        UserId = userId;
+        this.userId = userId;
     }
 
     public Integer getParkingId() {
