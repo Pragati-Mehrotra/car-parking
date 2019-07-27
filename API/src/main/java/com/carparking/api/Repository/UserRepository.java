@@ -10,5 +10,5 @@ public interface UserRepository extends Repository<User, Integer> {
 
     User findByPhoneAndAndPassword(String phone, String password);
     List<User> findAllBy();
-    User findByUid(Integer uid);
+    User findByUid(Integer user_id);
 }

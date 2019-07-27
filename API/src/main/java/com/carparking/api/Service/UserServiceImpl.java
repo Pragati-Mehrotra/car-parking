@@ -5,7 +5,7 @@ import com.carparking.api.Repository.UserCrudRepository;
 import com.carparking.api.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import org.json.simple.JSONObject;
 import java.util.List;
 
 @Service
@@ -28,8 +28,8 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
-    public User getUser(Integer uid){
-        User user = userRepository.findByUid(uid);
+    public User getUser(Integer user_id){
+        User user = userRepository.findByUid(user_id);
         return user;
     }
 
@@ -37,6 +37,7 @@ public class UserServiceImpl implements UserService {
         Integer id = null;
         User newUser = new User(name, id, password, balance, phone_no, email);
         User savedUser = userCrudRepository.save(newUser);
+        JSONObject data = new JSONObject();
         if(savedUser != null) {
             return "SignUp successful";
         }

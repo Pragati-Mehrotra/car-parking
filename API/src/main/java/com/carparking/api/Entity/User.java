@@ -13,7 +13,7 @@ public class User {
     @Id
     @Column
     @GeneratedValue
-    private Integer uid;
+    private Integer user_id;
 
     @Column
     private String password;
@@ -27,9 +27,9 @@ public class User {
     @Column
     private String email;
 
-    public User(String name, Integer uid, String password, Integer balance, String phone_no, String email) {
+    public User(String name, Integer user_id, String password, Integer balance, String phone_no, String email) {
         this.name = name;
-        this.uid = uid;
+        this.user_id = user_id;
         this.password = password;
         this.balance = balance;
         this.phone = phone_no;
@@ -38,7 +38,7 @@ public class User {
 
     public User(String name, Integer uid, String password, Integer balance, String phone_no) {
         this.name = name;
-        this.uid = uid;
+        this.user_id = user_id;
         this.password = password;
         this.balance = balance;
         this.phone = phone_no;
@@ -48,7 +48,7 @@ public class User {
     public String toString() {
         return "User{" +
                 "name='" + name + '\'' +
-                ", uid=" + uid +
+                ", user_id=" + user_id +
                 ", password='" + password + '\'' +
                 ", balance=" + balance +
                 ", phone_no='" + phone + '\'' +
@@ -68,11 +68,11 @@ public class User {
     }
 
     public Integer getUid() {
-        return uid;
+        return user_id;
     }
 
     public void setUid(Integer uid) {
-        this.uid = uid;
+        this.user_id = uid;
     }
 
     public String getPassword() {

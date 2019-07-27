@@ -51,9 +51,9 @@ public class mainController {
         return users.toString();
     }
 
-    @RequestMapping("/user/details/{uid}")
-    public User getUserDetails(@PathVariable Integer uid){
-        return userService.getUser(uid);
+    @RequestMapping("/user/details")
+    public User getUserDetails(@RequestParam Integer user_id){
+        return userService.getUser(user_id);
     }
 }
 
