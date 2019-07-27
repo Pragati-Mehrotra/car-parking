@@ -23,7 +23,7 @@ public class UserServiceImpl implements UserService {
         return users;
     }
 
-    public User getUser(String phone_no, String password) {
+    public User userLogin(String phone_no, String password) {
         User user= userRepository.findByPhoneAndAndPassword(phone_no, password);
         return user;
     }
@@ -31,5 +31,17 @@ public class UserServiceImpl implements UserService {
     public User getUser(Integer uid){
         User user = userRepository.findByUid(uid);
         return user;
+    }
+
+    public String userSignUp(String name, String password, Integer balance, String phone_no, String email){
+        Integer id = null;
+        User newUser = new User(name, id, password, balance, phone_no, email);
+        User savedUser = userCrudRepository.save(newUser);
+        if(savedUser != null) {
+            return "SignUp successful";
+        }
+        else {
+            return "SignUp unsuccessful";
+        }
     }
 }

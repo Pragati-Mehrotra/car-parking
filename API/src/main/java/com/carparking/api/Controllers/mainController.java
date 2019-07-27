@@ -30,7 +30,7 @@ public class mainController {
         JsonNode reqNode = mapper.readTree(request);
         String phone_no = reqNode.get("phone_no").asText();
         String password = reqNode.get("password").asText();
-        return userService.getUser(phone_no, password);
+        return userService.userLogin(phone_no, password);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/user/signUp")
@@ -42,7 +42,7 @@ public class mainController {
         Integer balance = reqNode.get("balance").asInt(0);
         String phone_no = reqNode.get("phone_no").asText();
         String email = reqNode.get("email").asText();
-        return "You requested signup!\n"+name+'\n'+password+'\n'+balance+'\n';
+        return userService.userSignUp(name, password, balance, phone_no, email);
     }
 
     @RequestMapping("/user/all")
