@@ -33,7 +33,23 @@ public class mainController {
 
     @RequestMapping("/")
     public String index() {
-        return "Greetings from Spring Boot!";
+        return "<h1>ParkMe REST API</h1><br>" +
+                "<code>Endpoints : <br><br>" +
+                "1. user/login<br>" +
+                "2. user/signUp<br>" +
+                "3. user/details<br>" +
+                "4. user/history<br>" +
+                "<br>" +
+                "5. booking/new<br>" +
+                "6. booking/cancel<br>" +
+                "7. booking/active<br>" +
+                "8. booking/checkout<br>" +
+                "<br>" +
+                "9. parking/nearby<br>" +
+                "10.parking/driveIn<br>" +
+                "11.parking/driveOut<br>" +
+                "12.parking/register<br></code><br>" +
+                "Click <a href=\"https://docs.google.com/document/d/1kQsKVKUtZEoalN3GA3Fz9dC7pSiqy5O-MDac4izyvhk/edit?usp=sharing\">here</a> to get full API Documentation<br>";
     }
 
     //-------------------------------------------------User starts here-----------------------------------------------
