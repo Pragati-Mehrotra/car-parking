@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface UserRepository extends Repository<User, Integer> {
 
-    User findByPhoneAndAndPassword(String phone, String password);
+    User findByPhoneNoAndPassword(String phoneNo, String password);
     List<User> findAllBy();
-    User findByUid(Integer user_id);
+    User findByUserId(Integer userId);
 }

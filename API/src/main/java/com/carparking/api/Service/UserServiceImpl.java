@@ -5,7 +5,7 @@ import com.carparking.api.Repository.UserCrudRepository;
 import com.carparking.api.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.json.simple.JSONObject;
+//import org.json.simple.JSONObject;
 import java.util.List;
 
 @Service
@@ -13,8 +13,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     UserRepository userRepository;
-    @Autowired
-    UserCrudRepository userCrudRepository;
+//    @Autowired
+//    UserCrudRepository userCrudRepository;
 
     @Override
     public List<User> getAllUsers() {
@@ -24,25 +24,18 @@ public class UserServiceImpl implements UserService {
     }
 
     public User userLogin(String phone_no, String password) {
-        User user= userRepository.findByPhoneAndAndPassword(phone_no, password);
+        User user= userRepository.findByPhoneNoAndPassword(phone_no, password);
         return user;
     }
 
-    public User getUser(Integer user_id){
-        User user = userRepository.findByUid(user_id);
+    public User getUser(Integer userId){
+        User user = userRepository.findByUserId(userId);
         return user;
     }
 
-    public String userSignUp(String name, String password, Integer balance, String phone_no, String email){
-        Integer id = null;
-        User newUser = new User(name, id, password, balance, phone_no, email);
-        User savedUser = userCrudRepository.save(newUser);
-        JSONObject data = new JSONObject();
-        if(savedUser != null) {
-            return "SignUp successful";
-        }
-        else {
-            return "SignUp unsuccessful";
-        }
+    public User SaveUser(User user){
+        System.out.println("------------------------------------------------------------------------" + user.toString());
+//        userCrudRepository.save(user);
+        return user;
     }
 }

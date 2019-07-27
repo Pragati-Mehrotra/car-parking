@@ -11,9 +11,9 @@ public class User {
     private String name;
 
     @Id
-    @Column
-    @GeneratedValue
-    private Integer user_id;
+    @Column(name = "userId")
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Integer userId;
 
     @Column
     private String password;
@@ -21,37 +21,45 @@ public class User {
     @Column
     private Integer balance;
 
-    @Column(name = "phone_no")
-    private String phone;
+    @Column(name = "phoneNo")
+    private String phoneNo;
 
     @Column
     private String email;
 
-    public User(String name, Integer user_id, String password, Integer balance, String phone_no, String email) {
+    public User(String name, Integer userId, String password, Integer balance, String phoneNo, String email) {
         this.name = name;
-        this.user_id = user_id;
+        this.userId = userId;
         this.password = password;
         this.balance = balance;
-        this.phone = phone_no;
+        this.phoneNo= phoneNo;
         this.email = email;
     }
 
-    public User(String name, Integer uid, String password, Integer balance, String phone_no) {
+    public User(String name, Integer userId, String password, Integer balance, String phoneNo) {
         this.name = name;
-        this.user_id = user_id;
+        this.userId = userId;
         this.password = password;
         this.balance = balance;
-        this.phone = phone_no;
+        this.phoneNo= phoneNo;
+    }
+
+    public User(String name, String password, Integer balance, String phoneNo, String email) {
+        this.name = name;
+        this.password = password;
+        this.balance = balance;
+        this.phoneNo= phoneNo;
+        this.email = email;
     }
 
     @Override
     public String toString() {
         return "User{" +
                 "name='" + name + '\'' +
-                ", user_id=" + user_id +
+                ", userId=" + userId +
                 ", password='" + password + '\'' +
                 ", balance=" + balance +
-                ", phone_no='" + phone + '\'' +
+                ", phoneNo='" + phoneNo+ '\'' +
                 ", email='" + email + '\'' +
                 '}';
     }
@@ -67,12 +75,12 @@ public class User {
         this.name = name;
     }
 
-    public Integer getUid() {
-        return user_id;
+    public Integer getUserId() {
+        return userId;
     }
 
-    public void setUid(Integer uid) {
-        this.user_id = uid;
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
     public String getPassword() {
@@ -91,12 +99,12 @@ public class User {
         this.balance = balance;
     }
 
-    public String getPhone_no() {
-        return phone;
+    public String getphoneNo() {
+        return phoneNo;
     }
 
-    public void setPhone_no(String phone_no) {
-        this.phone = phone_no;
+    public void setphoneNo(String phoneNo) {
+        this.phoneNo= phoneNo;
     }
 
     public String getEmail() {

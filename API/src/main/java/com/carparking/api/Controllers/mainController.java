@@ -28,27 +28,29 @@ public class mainController {
     public @ResponseBody User userLogin(@RequestBody String request) throws IOException{
 
         JsonNode reqNode = mapper.readTree(request);
-        String phone_no = reqNode.get("phone_no").asText();
+        String phoneNo = reqNode.get("phoneNo").asText();
         String password = reqNode.get("password").asText();
-        return userService.userLogin(phone_no, password);
+        return userService.userLogin(phoneNo, password);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/user/signUp")
-    public String userSignUp(@RequestBody String request) throws IOException{
+    public User userSignUp(@RequestBody String request) throws IOException{
 
         JsonNode reqNode = mapper.readTree(request);
         String name = reqNode.get("name").asText();
         String password = reqNode.get("password").asText();
         Integer balance = reqNode.get("balance").asInt(0);
-        String phone_no = reqNode.get("phone_no").asText();
+        String phoneNo = reqNode.get("phoneNo").asText();
         String email = reqNode.get("email").asText();
-        return userService.userSignUp(name, password, balance, phone_no, email);
+        User user = new User(name,password,balance,phoneNo,email);
+        user = userService.SaveUser(user);
+        return user;
     }
 
     @RequestMapping("/user/all")
-    public String userGetAll(){
+    public List<User> userGetAll(){
         List<User> users = userService.getAllUsers();
-        return users.toString();
+        return users;
     }
 
     @RequestMapping("/user/details")
