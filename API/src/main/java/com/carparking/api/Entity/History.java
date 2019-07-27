@@ -1,15 +1,13 @@
 package com.carparking.api.Entity;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
+@Entity
+@Table(name = "\"history\"")
 public class History {
 
     @Id
     @Column(name = "booking_id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer bookingId;
 
     @Column(name = "in_time")

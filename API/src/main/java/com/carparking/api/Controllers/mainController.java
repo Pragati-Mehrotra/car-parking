@@ -1,6 +1,7 @@
 package com.carparking.api.Controllers;
 
 import com.carparking.api.Entity.Booking;
+import com.carparking.api.Entity.History;
 import com.carparking.api.Entity.Parking;
 import com.carparking.api.Entity.User;
 import com.carparking.api.Service.IParkingService;
@@ -106,23 +107,23 @@ public class mainController {
     }
 
     @RequestMapping("/parking/driveIn")
-    public @ResponseBody Object driveIn(@RequestBody String request)throws IOException{
+    public @ResponseBody String driveIn(@RequestBody String request)throws IOException{
 
         JsonNode reqNode = mapper.readTree(request);
         Integer parkingId = reqNode.get("parkingId").asInt();
         Integer inOtp = reqNode.get("inOtp").asInt();
 
-        return "drive in successfull";
+        return parkingService.driveIn(parkingId, inOtp);
     }
 
-    @RequestMapping("/pariking/driveOut")
+    @RequestMapping("/parking/driveOut")
     public @ResponseBody Object driveOut(@RequestBody String request)throws IOException{
 
         JsonNode reqNode = mapper.readTree(request);
         Integer parkingId = reqNode.get("parkingId").asInt();
         Integer outOtp = reqNode.get("outOtp").asInt();
 
-        return "drive out successfull";
+        return parkingService.driveOut(parkingId, outOtp);
     }
 
     //--------------------------------------------- Booking starts here ----------------------------------------------
@@ -140,6 +141,11 @@ public class mainController {
     @RequestMapping("/booking/checkout")
     public Booking getCheckoutOtp(@RequestParam Integer bookingId){
         return bookingService.checkout(bookingId);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/booking/cancel")
+    public History cancelBooking(@RequestParam Integer bookingId){
+        return bookingService.cancelBooking(bookingId);
     }
     //--------------------------------------------- History starts here ----------------------------------------------
 }

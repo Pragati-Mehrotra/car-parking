@@ -22,7 +22,7 @@ public class Booking {
     private Integer inOtp;
 
     @Column(name = "out_otp")
-    private Integer outOpt;
+    private Integer outOtp;
 
     @Column(name = "slot_duration")
     private Integer slotDuration;
@@ -39,11 +39,11 @@ public class Booking {
     @Column(name = "parking_id")
     private Integer parkingId;
 
-    public Booking(Long inTime, Long outTime, Integer inOtp, Integer outOpt, Integer slotDuration, String status, Double bill, Integer userId, Integer parkingId) {
+    public Booking(Long inTime, Long outTime, Integer inOtp, Integer outOtp, Integer slotDuration, String status, Double bill, Integer userId, Integer parkingId) {
         this.inTime = inTime;
         this.outTime = outTime;
         this.inOtp = inOtp;
-        this.outOpt = outOpt;
+        this.outOtp = outOtp;
         this.slotDuration = slotDuration;
         this.status = status;
         this.bill = bill;
@@ -51,12 +51,12 @@ public class Booking {
         this.parkingId = parkingId;
     }
 
-    public Booking(Integer bookingId, Long inTime, Long outTime, Integer inOtp, Integer outOpt, Integer slotDuration, String status, Double bill, Integer userId, Integer parkingId) {
+    public Booking(Integer bookingId, Long inTime, Long outTime, Integer inOtp, Integer outOtp, Integer slotDuration, String status, Double bill, Integer userId, Integer parkingId) {
         this.bookingId = bookingId;
         this.inTime = inTime;
         this.outTime = outTime;
         this.inOtp = inOtp;
-        this.outOpt = outOpt;
+        this.outOtp = outOtp;
         this.slotDuration = slotDuration;
         this.status = status;
         this.bill = bill;
@@ -101,11 +101,11 @@ public class Booking {
     }
 
     public Integer getOutOpt() {
-        return outOpt;
+        return outOtp;
     }
 
-    public void setOutOpt(Integer outOpt) {
-        this.outOpt = outOpt;
+    public void setOutOpt(Integer outOtp) {
+        this.outOtp = outOtp;
     }
 
     public Integer getSlotDuration() {

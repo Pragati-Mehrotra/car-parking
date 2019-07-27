@@ -1,6 +1,7 @@
 package com.carparking.api.Service;
 
 import com.carparking.api.Entity.Booking;
+import com.carparking.api.Entity.History;
 
 import java.util.List;
 
@@ -10,9 +11,9 @@ public interface IBookingService {
 
     public Booking saveBooking(Booking booking);
 
-    //public Booking cancelBooking(int bookingId);
+    public History cancelBooking(Integer bookingId);
 
-    public Booking checkout(int bookingId);
+    public Booking checkout(Integer bookingId);
 
     public Booking getBookingById(Integer bookingId);
 }
