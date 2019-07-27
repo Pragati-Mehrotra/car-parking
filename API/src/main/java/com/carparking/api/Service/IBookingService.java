@@ -12,6 +12,7 @@ public interface IBookingService {
 
     //public Booking cancelBooking(int bookingId);
 
-    //public Booking checkout(int bookingId);
+    public Booking checkout(int bookingId);
 
+    public Booking getBookingById(Integer bookingId);
 }

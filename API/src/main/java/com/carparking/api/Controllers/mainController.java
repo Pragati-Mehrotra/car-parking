@@ -115,6 +115,16 @@ public class mainController {
     public @ResponseBody Booking registerBooking(@RequestBody Booking booking)throws IOException {
         return bookingService.saveBooking(booking);
     }
+
+    @RequestMapping("/booking/details")
+    public Booking getBookingDetails(@RequestParam Integer bookingId){
+        return bookingService.getBookingById(bookingId);
+    }
+
+    @RequestMapping("/booking/checkout")
+    public Booking getCheckoutOtp(@RequestParam Integer bookingId){
+        return bookingService.checkout(bookingId);
+    }
     //--------------------------------------------- History starts here ----------------------------------------------
 }
 
