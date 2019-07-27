@@ -13,8 +13,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     UserRepository userRepository;
-//    @Autowired
-//    UserCrudRepository userCrudRepository;
+    @Autowired
+    UserCrudRepository userCrudRepository;
 
     @Override
     public List<User> getAllUsers() {
@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
 
     public User SaveUser(User user){
         System.out.println("------------------------------------------------------------------------" + user.toString());
-//        userCrudRepository.save(user);
+        userCrudRepository.save(user);
         return user;
     }
 }

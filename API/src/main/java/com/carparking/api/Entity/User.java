@@ -1,70 +1,50 @@
 package com.carparking.api.Entity;
 
-
 import javax.persistence.*;
 
 @Entity
-@Table(name = "user", schema = "public")
+@Table(name = "\"user\"")
 public class User {
 
-    @Column
+    @Column(name = "name")
     private String name;
 
     @Id
-    @Column(name = "userId")
+    @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer userId;
 
-    @Column
+    @Column(name = "password")
     private String password;
 
-    @Column
+    @Column(name = "balance")
     private Integer balance;
 
-    @Column(name = "phoneNo")
+    @Column(name = "phone_no")
     private String phoneNo;
 
-    @Column
+    @Column(name = "email")
     private String email;
-
-    public User(String name, Integer userId, String password, Integer balance, String phoneNo, String email) {
-        this.name = name;
-        this.userId = userId;
-        this.password = password;
-        this.balance = balance;
-        this.phoneNo= phoneNo;
-        this.email = email;
-    }
-
-    public User(String name, Integer userId, String password, Integer balance, String phoneNo) {
-        this.name = name;
-        this.userId = userId;
-        this.password = password;
-        this.balance = balance;
-        this.phoneNo= phoneNo;
-    }
 
     public User(String name, String password, Integer balance, String phoneNo, String email) {
         this.name = name;
         this.password = password;
         this.balance = balance;
-        this.phoneNo= phoneNo;
+        this.phoneNo = phoneNo;
         this.email = email;
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "name='" + name + '\'' +
-                ", userId=" + userId +
-                ", password='" + password + '\'' +
-                ", balance=" + balance +
-                ", phoneNo='" + phoneNo+ '\'' +
-                ", email='" + email + '\'' +
-                '}';
+    public User(String name,Integer userId, String password, Integer balance, String phoneNo, String email) {
+        this.name = name;
+        this.userId = userId;
+        this.password = password;
+        this.balance = balance;
+        this.phoneNo = phoneNo;
+        this.email = email;
     }
 
-    public User() {
+    public User(){
+
     }
 
     public String getName() {
@@ -99,12 +79,12 @@ public class User {
         this.balance = balance;
     }
 
-    public String getphoneNo() {
+    public String getPhoneNo() {
         return phoneNo;
     }
 
-    public void setphoneNo(String phoneNo) {
-        this.phoneNo= phoneNo;
+    public void setPhoneNo(String phoneNo) {
+        this.phoneNo = phoneNo;
     }
 
     public String getEmail() {
@@ -113,5 +93,17 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "name='" + name + '\'' +
+                ", userId=" + userId +
+                ", password='" + password + '\'' +
+                ", balance=" + balance +
+                ", phoneNo='" + phoneNo + '\'' +
+                ", email='" + email + '\'' +
+                '}';
     }
 }

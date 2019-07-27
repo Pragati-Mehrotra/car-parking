@@ -1,6 +1,8 @@
 package com.carparking.api.Controllers;
 
+import com.carparking.api.Entity.Parking;
 import com.carparking.api.Entity.User;
+import com.carparking.api.Service.ParkingService;
 import com.carparking.api.Service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -16,16 +18,24 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class mainController {
 
     ObjectMapper mapper = new ObjectMapper();
+
     @Autowired
     UserServiceImpl userService;
+
+    @Autowired
+    ParkingService parkingService;
+
 
     @RequestMapping("/")
     public String index() {
         return "Greetings from Spring Boot!";
     }
 
+    //-----------------------------------------------User starts here-----------------------------------
+
     @RequestMapping(method = RequestMethod.GET ,value = "/user/login")
-    public @ResponseBody User userLogin(@RequestBody String request) throws IOException{
+    public @ResponseBody
+    User userLogin(@RequestBody String request) throws IOException{
 
         JsonNode reqNode = mapper.readTree(request);
         String phoneNo = reqNode.get("phoneNo").asText();
@@ -56,6 +66,13 @@ public class mainController {
     @RequestMapping("/user/details")
     public User getUserDetails(@RequestParam Integer user_id){
         return userService.getUser(user_id);
+    }
+
+    //--------------------------------------Parking starts here --------------------------------
+
+    @RequestMapping("/parking/all")
+    public @ResponseBody List<Parking> getAllParkings(){
+        return parkingService.getParkings();
     }
 }
 

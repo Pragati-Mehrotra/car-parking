@@ -76,23 +76,23 @@ ALTER TABLE public.history
   OWNER TO postgres;
 
 
-CREATE TABLE public."user"
+CREATE TABLE public.user
 (
   name character varying(50) NOT NULL,
-  "userId" serial NOT NULL primary key,
+  user_id serial NOT NULL primary key,
   password character varying(50) NOT NULL,
   balance integer NOT NULL,
-  "phoneNo" character varying(10) NOT NULL unique,
+  phone_no character varying(10) NOT NULL unique,
   email character varying(50) unique
 );
 
 CREATE TABLE public.parking
 (
-  "parkingId" serial NOT NULL primary key,
-  "parkingName" character varying(50) NOT NULL,
+  parking_id serial NOT NULL primary key,
+  parking_name character varying(50) NOT NULL,
   address character varying(100) NOT NULL,
   latitude double precision NOT NULL,
   longitude double precision NOT NULL,
-  "totalSlots" integer NOT NULL,
-  "availableSlots" integer NOT NULL
+  total_slots integer NOT NULL,
+  available_slots integer NOT NULL
 );
