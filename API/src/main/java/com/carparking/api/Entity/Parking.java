@@ -121,5 +121,4 @@ public class Parking {
         this.availableSlots = availableSlots;
     }
 
-
 }

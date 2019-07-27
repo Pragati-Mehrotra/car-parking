@@ -96,3 +96,29 @@ CREATE TABLE public.parking
   total_slots integer NOT NULL,
   available_slots integer NOT NULL
 );
+
+CREATE TABLE public.booking
+(
+  booking_id integer NOT NULL primary key,
+  in_time timestamp NOT NULL,
+  out_time timestamp,
+  in_otp integer NOT NULL,
+  out_otp integer,
+  slot_duration integer NOT NULL,
+  status varchar(15) NOT NULL,
+  bill double precision,
+  user_id integer NOT NULL REFERENCES "user"(user_id),
+  parking_id integer NOT NULL REFERENCES "parking"(parking_id)
+);
+
+CREATE TABLE public.history
+(
+  booking_id integer NOT NULL primary key,
+  in_time timestamp NOT NULL,
+  out_time timestamp,
+  slot_duration integer NOT NULL,
+  status varchar(15) NOT NULL,
+  bill double precision,
+  user_id integer NOT NULL REFERENCES "user"(user_id),
+  parking_id integer NOT NULL REFERENCES "parking"(parking_id)
+);

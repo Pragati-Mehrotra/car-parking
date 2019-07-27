@@ -2,8 +2,8 @@ package com.carparking.api.Controllers;
 
 import com.carparking.api.Entity.Parking;
 import com.carparking.api.Entity.User;
-import com.carparking.api.Service.ParkingService;
-import com.carparking.api.Service.UserServiceImpl;
+import com.carparking.api.Service.IParkingService;
+import com.carparking.api.Service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,13 +17,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RestController
 public class mainController {
 
-    ObjectMapper mapper = new ObjectMapper();
+    private ObjectMapper mapper = new ObjectMapper();
 
     @Autowired
-    UserServiceImpl userService;
+    IUserService userService;
 
     @Autowired
-    ParkingService parkingService;
+    IParkingService parkingService;
 
 
     @RequestMapping("/")
@@ -31,7 +31,7 @@ public class mainController {
         return "Greetings from Spring Boot!";
     }
 
-    //-----------------------------------------------User starts here-----------------------------------
+    //-------------------------------------------------User starts here-----------------------------------------------
 
     @RequestMapping(method = RequestMethod.GET ,value = "/user/login")
     public @ResponseBody
@@ -44,16 +44,9 @@ public class mainController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/user/signUp")
-    public User userSignUp(@RequestBody String request) throws IOException{
+    public User userSignUp(@RequestBody User user) throws IOException{
 
-        JsonNode reqNode = mapper.readTree(request);
-        String name = reqNode.get("name").asText();
-        String password = reqNode.get("password").asText();
-        Integer balance = reqNode.get("balance").asInt(0);
-        String phoneNo = reqNode.get("phoneNo").asText();
-        String email = reqNode.get("email").asText();
-        User user = new User(name,password,balance,phoneNo,email);
-        user = userService.SaveUser(user);
+        user = userService.saveUser(user);
         return user;
     }
 
@@ -68,11 +61,51 @@ public class mainController {
         return userService.getUser(user_id);
     }
 
-    //--------------------------------------Parking starts here --------------------------------
+    //--------------------------------------Parking starts here --------------------------------------------------
 
     @RequestMapping("/parking/all")
     public @ResponseBody List<Parking> getAllParkings(){
         return parkingService.getParkings();
     }
+
+    @RequestMapping("/parking/nearby")
+    public @ResponseBody List<Parking> getNearbyParkings(@RequestBody String request)throws IOException {
+
+        JsonNode reqNode = mapper.readTree(request);
+        Double latitude = reqNode.get("latitude").asDouble();
+        Double longitude = reqNode.get("longitude").asDouble();
+        Integer radius = reqNode.get("radius").asInt();
+
+        return parkingService.getParkingsNearby(latitude, longitude, radius);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/parking/register")
+    public @ResponseBody Parking registerParking(@RequestBody Parking parking)throws IOException {
+        return parkingService.saveParking(parking);
+    }
+
+    @RequestMapping("/parking/driveIn")
+    public @ResponseBody Object driveIn(@RequestBody String request)throws IOException{
+
+        JsonNode reqNode = mapper.readTree(request);
+        Integer parkingId = reqNode.get("parkingId").asInt();
+        Integer inOtp = reqNode.get("inOtp").asInt();
+
+        return "drive in successfull";
+    }
+
+    @RequestMapping("/pariking/driveOut")
+    public @ResponseBody Object driveOut(@RequestBody String request)throws IOException{
+
+        JsonNode reqNode = mapper.readTree(request);
+        Integer parkingId = reqNode.get("parkingId").asInt();
+        Integer outOtp = reqNode.get("outOtp").asInt();
+
+        return "drive out successfull";
+    }
+
+    //--------------------------------------------- Booking starts here ----------------------------------------------
+
+    //--------------------------------------------- History starts here ----------------------------------------------
 }
 
