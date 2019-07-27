@@ -83,6 +83,11 @@ public class mainController {
         return userService.getUser(user_id);
     }
 
+    @RequestMapping("/user/history")
+    public List<History> getUserHistory(Integer userId){
+        return userService.getUserHistory(userId);
+    }
+
     //--------------------------------------Parking starts here --------------------------------------------------
 
     @RequestMapping("/parking/all")
@@ -137,6 +142,12 @@ public class mainController {
     public Booking getBookingDetails(@RequestParam Integer bookingId){
         return bookingService.getBookingById(bookingId);
     }
+
+    @RequestMapping("/booking/active")
+    public List<Booking> getActiveBookings(@RequestParam Integer userId){
+        return bookingService.getActiveBookings(userId);
+    }
+
 
     @RequestMapping("/booking/checkout")
     public Booking getCheckoutOtp(@RequestParam Integer bookingId){

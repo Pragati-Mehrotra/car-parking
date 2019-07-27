@@ -1,6 +1,9 @@
 package com.carparking.api.Service;
 
+import com.carparking.api.Entity.History;
 import com.carparking.api.Entity.User;
+import com.carparking.api.Repository.HistoryCrudRepository;
+import com.carparking.api.Repository.HistoryRepository;
 import com.carparking.api.Repository.UserCrudRepository;
 import com.carparking.api.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +16,15 @@ public class UserService implements IUserService {
 
     @Autowired
     UserRepository userRepository;
+
     @Autowired
     UserCrudRepository userCrudRepository;
+
+    @Autowired
+    HistoryCrudRepository historyCrudRepository;
+
+    @Autowired
+    HistoryRepository historyRepository;
 
     @Override
     public List<User> getAllUsers() {
@@ -37,5 +47,11 @@ public class UserService implements IUserService {
         System.out.println("------------------------------------------------------------------------" + user.toString());
         userCrudRepository.save(user);
         return user;
+    }
+
+    @Override
+    public List<History> getUserHistory(Integer userId) {
+        List <History> userHistory = historyRepository.findHistoryByUserId(userId);
+        return userHistory;
     }
 }

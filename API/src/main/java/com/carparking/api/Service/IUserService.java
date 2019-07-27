@@ -1,5 +1,6 @@
 package com.carparking.api.Service;
 
+import com.carparking.api.Entity.History;
 import com.carparking.api.Entity.User;
 
 import java.util.List;
@@ -10,4 +11,5 @@ public interface IUserService {
     public User userLogin(String phoneNo, String password);
     public User getUser(Integer userId);
     public User saveUser(User user);
+    public List<History> getUserHistory(Integer userId);
 }
