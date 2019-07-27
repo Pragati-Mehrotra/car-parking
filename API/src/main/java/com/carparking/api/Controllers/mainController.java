@@ -1,7 +1,7 @@
 package com.carparking.api.Controllers;
 
 import com.carparking.api.Entity.User;
-import com.carparking.api.Service.MainServiceImpl;
+import com.carparking.api.Service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +17,7 @@ public class mainController {
 
     ObjectMapper mapper = new ObjectMapper();
     @Autowired
-    MainServiceImpl mainService;
+    UserServiceImpl userService;
 
     @RequestMapping("/")
     public String index() {
@@ -30,7 +30,7 @@ public class mainController {
         JsonNode reqNode = mapper.readTree(request);
         String phone_no = reqNode.get("phone_no").asText();
         String password = reqNode.get("password").asText();
-        return mainService.getUser(phone_no, password);
+        return userService.getUser(phone_no, password);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/user/signUp")
@@ -47,13 +47,13 @@ public class mainController {
 
     @RequestMapping("/user/all")
     public String userGetAll(){
-        List<User> users = mainService.getAllUsers();
+        List<User> users = userService.getAllUsers();
         return users.toString();
     }
 
     @RequestMapping("/user/details/{uid}")
     public User getUserDetails(@PathVariable Integer uid){
-        return mainService.getUser(uid);
+        return userService.getUser(uid);
     }
 }
 
