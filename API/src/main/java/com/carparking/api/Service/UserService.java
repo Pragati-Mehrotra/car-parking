@@ -1,15 +1,14 @@
 package com.carparking.api.Service;
 
 import com.carparking.api.Entity.History;
+import com.carparking.api.Entity.Parking;
 import com.carparking.api.Entity.User;
-import com.carparking.api.Repository.HistoryCrudRepository;
-import com.carparking.api.Repository.HistoryRepository;
-import com.carparking.api.Repository.UserCrudRepository;
-import com.carparking.api.Repository.UserRepository;
+import com.carparking.api.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 //import org.json.simple.JSONObject;
 import java.util.List;
+
 
 @Service
 public class UserService implements IUserService {
@@ -25,6 +24,9 @@ public class UserService implements IUserService {
 
     @Autowired
     HistoryRepository historyRepository;
+
+    @Autowired
+    ParkingRepository parkingRepository;
 
     @Override
     public List<User> getAllUsers() {
@@ -53,6 +55,13 @@ public class UserService implements IUserService {
     @Override
     public List<History> getUserHistory(Integer userId) {
         List <History> userHistory = historyRepository.findHistoryByUserId(userId);
+        for (int i = 0; i < userHistory.size(); i++) {
+           History history = userHistory.get(i);
+           Parking parking = parkingRepository.findByParkingId(history.getParkingId());
+           String parkingName = parking.getParkingName();
+           history.setParkingName(parkingName);
+
+        }
         return userHistory;
     }
 

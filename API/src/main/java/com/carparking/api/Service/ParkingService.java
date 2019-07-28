@@ -9,9 +9,10 @@ import com.carparking.api.Utils.GeoTools;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.awt.print.Book;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Date;
+//import org.joda.time.Instant;
 
 @Service
 public class ParkingService implements IParkingService {
@@ -79,9 +80,13 @@ public class ParkingService implements IParkingService {
         history.setUserId(booking.getUserId());
         history.setBill(booking.getBill());
         history.setInTime(booking.getInTime());
+        Date date = new Date();
+        Long outTime = date.getTime();
+        booking.setOutTime(outTime);
         history.setOutTime(booking.getOutTime());
         history.setStatus("Closed");
         history.setSlotDuration(booking.getSlotDuration());
+        System.out.println("---" + history);
         History savedHistory = historyCrudRepository.save(history);
         Integer bookingId = booking.getBookingId();
         bookingCrudRepository.deleteById(bookingId);

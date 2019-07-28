@@ -70,6 +70,7 @@ public class BookingService implements IBookingService {
     @Override
     public History cancelBooking(Integer bookingId) {
         Booking booking = bookingRepository.findByBookingId(bookingId);
+        Parking parking = parkingRepository.findByParkingId(booking.getParkingId());
         History history = new History();
         history.setBookingId(booking.getBookingId());
         history.setParkingId(booking.getParkingId());
@@ -81,6 +82,11 @@ public class BookingService implements IBookingService {
         history.setSlotDuration(booking.getSlotDuration());
         History savedHistory = historyCrudRepository.save(history);
         bookingCrudRepository.deleteById(bookingId);
+        Integer availableSlots = parking.getAvailableSlots() + 1;
+        parking.setAvailableSlots(availableSlots);
+        Parking savedParking = parkingCrudRepository.save(parking);
+        String parkingName = parking.getParkingName();
+        savedHistory.setParkingName(parkingName);
         return savedHistory;
     }
 

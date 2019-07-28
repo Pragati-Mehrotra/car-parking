@@ -144,7 +144,7 @@ public class mainController {
     }
 
     @RequestMapping("/booking/details")
-    public Booking getBookingDetails(@RequestParam Integer bookingId){
+    public Object getBookingDetails(@RequestParam Integer bookingId){
         return bookingService.getBookingById(bookingId);
     }
 

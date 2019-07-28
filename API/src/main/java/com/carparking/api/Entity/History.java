@@ -32,6 +32,8 @@ public class History {
     @Column(name = "parking_id")
     private Integer parkingId;
 
+    private String parkingName;
+
     public History(Long inTime, Long outTime, Integer slotDuration, String status, Double bill, Integer userId, Integer parkingId) {
         this.inTime = inTime;
         this.outTime = outTime;
@@ -119,5 +121,13 @@ public class History {
 
     public void setParkingId(Integer parkingId) {
         this.parkingId = parkingId;
+    }
+
+    public String getParkingName() {
+        return parkingName;
+    }
+
+    public void setParkingName(String parkingName) {
+        this.parkingName = parkingName;
     }
 }
