@@ -36,8 +36,8 @@ public class ParkingAdapter extends RecyclerView.Adapter<ParkingAdapter.ViewHold
         ParkingInfo parkingInfo = parkingInfoList.get(position);
         holder.parkingName.setText(parkingInfo.getParkingName());
         holder.parkingAddress.setText(parkingInfo.getParkingAddress());
-        holder.availableSlots.setText(parkingInfo.getAvailableSlots());
-        holder.totalSlots.setText(parkingInfo.getTotalSlots());
+        holder.availableSlots.setText(String.valueOf(parkingInfo.getAvailableSlots()));
+        holder.totalSlots.setText(String.valueOf(parkingInfo.getTotalSlots()));
         holder.parkingLinearLayout.setOnClickListener(onClickListener);
     }
 

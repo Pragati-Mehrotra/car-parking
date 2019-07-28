@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity
     private RecyclerView parkingRecyclerView;
     private ParkingAdapter parkingAdapter;
     private View.OnClickListener clickListener;
+    private double latitude, longitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,9 +107,10 @@ public class MainActivity extends AppCompatActivity
                         if (location != null) {
                             // Logic to handle location object
                             TextView latLong = findViewById(R.id.debugging_lat_long);
-                            latLong.setText("Latitude: "+location.getLatitude()+", Longitude: "+location.getLongitude());
-                            Log.e("lat & lon", ""+location.getLatitude()+", "+location.getLongitude());
-                            apiHelper.getParkingNearby(location.getLatitude(), location.getLongitude());
+                            latitude = location.getLatitude();
+                            longitude = location.getLongitude();
+                            latLong.setText("Latitude: "+latitude+", Longitude: "+longitude);
+                            apiHelper.getParkingNearby(latitude, longitude);
                         }else{
                             Log.e("failed to get lat", ":(");
                         }
