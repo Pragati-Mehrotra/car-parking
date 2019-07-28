@@ -3,6 +3,7 @@ package com.alokbharti.parkme;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -37,9 +38,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.Menu;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
+
+import static com.alokbharti.parkme.Utilities.GlobalConstants.currentUserId;
+import static com.alokbharti.parkme.Utilities.SavedSharedPreferences.setUserId;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, LocationInterface {
@@ -80,8 +85,8 @@ public class MainActivity extends AppCompatActivity
         }
 
         parkingRecyclerView = findViewById(R.id.parkingRecyclerView);
-        parkingRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         parkingRecyclerView.setHasFixedSize(true);
+        parkingRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         clickListener = new View.OnClickListener() {
             @Override
@@ -100,6 +105,8 @@ public class MainActivity extends AppCompatActivity
                         // Got last known location. In some rare situations this can be null.
                         if (location != null) {
                             // Logic to handle location object
+                            TextView latLong = findViewById(R.id.debugging_lat_long);
+                            latLong.setText("Latitude: "+location.getLatitude()+", Longitude: "+location.getLongitude());
                             Log.e("lat & lon", ""+location.getLatitude()+", "+location.getLongitude());
                             apiHelper.getParkingNearby(location.getLatitude(), location.getLongitude());
                         }else{
@@ -126,7 +133,7 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            finishAffinity();
         }
     }
 
@@ -145,8 +152,9 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.action_sign_out) {
+            setUserId(MainActivity.this, currentUserId, false);
+            startActivity(new Intent(this, LandingPageActivity.class));
         }
 
         return super.onOptionsItemSelected(item);
@@ -179,8 +187,9 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onGetParkingList(List<ParkingInfo> parkingList) {
+        Log.e("parking succesful", ":)");
         if(parkingList.size()==0){
-            Toast.makeText(this, "No parking slots available in your ares", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "No parking slots available in your area", Toast.LENGTH_SHORT).show();
         }else {
             parkingAdapter = new ParkingAdapter(parkingList, clickListener);
             parkingRecyclerView.setAdapter(parkingAdapter);

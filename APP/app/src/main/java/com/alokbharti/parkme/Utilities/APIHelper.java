@@ -117,8 +117,8 @@ public class APIHelper {
                     @Override
                     public void onResponse(JSONArray response) {
                         List<ParkingInfo> parkingList = new ArrayList<>();
-                        for (int i=0; i<response.length(); i++){
-                            try {
+                        try {
+                            for (int i = 0; i < response.length(); i++) {
                                 JSONObject object = response.getJSONObject(i);
                                 ParkingInfo parkingInfo = new ParkingInfo(object.getInt("parkingId"),
                                         object.getString("parkingName"),
@@ -129,10 +129,12 @@ public class APIHelper {
                                         object.getInt("availableSlots"));
 
                                 parkingList.add(parkingInfo);
-                                locationInterface.onGetParkingList(parkingList);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
                             }
+
+                            Log.e("Got list successful",":)");
+                            locationInterface.onGetParkingList(parkingList);
+                        }catch (JSONException e){
+                            Log.e("Failed to get data", ":(");
                         }
                     }
 
