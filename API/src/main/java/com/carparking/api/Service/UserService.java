@@ -44,6 +44,7 @@ public class UserService implements IUserService {
     }
 
     public User saveUser(User user){
+        user.setBalance(0);
         System.out.println("------------------------------------------------------------------------" + user.toString());
         userCrudRepository.save(user);
         return user;
@@ -53,5 +54,13 @@ public class UserService implements IUserService {
     public List<History> getUserHistory(Integer userId) {
         List <History> userHistory = historyRepository.findHistoryByUserId(userId);
         return userHistory;
+    }
+
+    @Override
+    public User saveUserEmail(Integer userId, String email) {
+        User user = userRepository.findByUserId(userId);
+        user.setEmail(email);
+        User savedUser = userCrudRepository.save(user);
+        return savedUser;
     }
 }

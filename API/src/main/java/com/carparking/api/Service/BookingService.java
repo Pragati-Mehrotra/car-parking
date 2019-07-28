@@ -2,8 +2,11 @@ package com.carparking.api.Service;
 
 import com.carparking.api.Entity.Booking;
 import com.carparking.api.Entity.History;
+import com.carparking.api.Entity.Parking;
 import com.carparking.api.Repository.BookingCrudRepository;
+import com.carparking.api.Repository.ParkingCrudRepository;
 import com.carparking.api.Repository.BookingRepository;
+import com.carparking.api.Repository.ParkingRepository;
 import com.carparking.api.Repository.HistoryCrudRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,14 +25,29 @@ public class BookingService implements IBookingService {
     @Autowired
     HistoryCrudRepository historyCrudRepository;
 
+    @Autowired
+    ParkingRepository parkingRepository;
+
+    @Autowired
+    ParkingCrudRepository parkingCrudRepository;
+
     @Override
     public Booking saveBooking(Booking booking) {
 
         int randomPin = (int)(Math.random()* 9000)+ 1000;
-        System.out.println("------------" + randomPin);
         booking.setInOtp(randomPin);
         booking.setStatus("Booked");
-        return bookingCrudRepository.save(booking);
+        Double bill = (double)(booking.getSlotDuration() * 10);
+        booking.setBill(bill);
+        Integer parkingId = booking.getParkingId();
+        Booking savedBooking = bookingCrudRepository.save(booking);
+        if(savedBooking != null) {
+            Parking parking = parkingRepository.findByParkingId(parkingId);
+            Integer availableSlots = parking.getAvailableSlots() - 1;
+            parking.setAvailableSlots(availableSlots);
+            Parking savedParking = parkingCrudRepository.save(parking);
+        }
+        return savedBooking;
     }
 
     @Override

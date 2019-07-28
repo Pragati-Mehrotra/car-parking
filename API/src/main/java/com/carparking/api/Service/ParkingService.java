@@ -86,6 +86,10 @@ public class ParkingService implements IParkingService {
         Integer bookingId = booking.getBookingId();
         bookingCrudRepository.deleteById(bookingId);
         if(savedHistory != null) {
+            Parking parking = parkingRepository.findByParkingId(parkingId);
+            Integer availableSlots = parking.getAvailableSlots() + 1;
+            parking.setAvailableSlots(availableSlots);
+            Parking savedParking = parkingCrudRepository.save(parking);
             return "Drive out successfull";
         }
         else {

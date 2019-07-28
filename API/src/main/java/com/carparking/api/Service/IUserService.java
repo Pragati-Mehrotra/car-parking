@@ -12,4 +12,5 @@ public interface IUserService {
     public User getUser(Integer userId);
     public User saveUser(User user);
     public List<History> getUserHistory(Integer userId);
+    public User saveUserEmail(Integer userId, String email);
 }

@@ -72,6 +72,11 @@ public class mainController {
         return user;
     }
 
+    @RequestMapping(method = RequestMethod.POST, value = "/user/email")
+    public User addEmail(@RequestParam Integer userId, @RequestParam String email) throws IOException{
+        return userService.saveUserEmail(userId, email);
+    }
+
     @RequestMapping("/user/all")
     public List<User> userGetAll(){
         List<User> users = userService.getAllUsers();

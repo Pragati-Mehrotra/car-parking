@@ -9,4 +9,5 @@ import java.util.List;
 public interface ParkingRepository extends Repository<Parking, Integer> {
 
     public List<Parking> findAllBy();
+    Parking findByParkingId(Integer parkingId);
 }
