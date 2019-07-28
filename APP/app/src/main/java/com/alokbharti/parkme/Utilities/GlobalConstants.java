@@ -2,7 +2,7 @@ package com.alokbharti.parkme.Utilities;
 
 public class GlobalConstants {
     public static int currentUserId = 0;
-    public static String BASE_URL = "52.172.30.204:5433/";
+    public static String BASE_URL = "http://52.172.30.204:5433/";
     public static String signUpUrl = BASE_URL+"user/signUp";
     public static String loginUrl = BASE_URL+"user/login";
     public static String userDetailsUrl = BASE_URL+"user/details";
