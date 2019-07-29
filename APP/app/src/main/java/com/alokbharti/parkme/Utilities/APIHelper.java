@@ -3,6 +3,7 @@ package com.alokbharti.parkme.Utilities;
 import android.util.Log;
 
 import com.alokbharti.parkme.Interfaces.AuthInterface;
+import com.alokbharti.parkme.Interfaces.CommonAPIInterface;
 import com.alokbharti.parkme.Interfaces.LocationInterface;
 import com.alokbharti.parkme.ParkingInfo;
 import com.androidnetworking.error.ANError;
@@ -23,6 +24,7 @@ public class APIHelper {
 
     private AuthInterface authInterface;
     private LocationInterface locationInterface;
+    private CommonAPIInterface commonAPIInterface;
 
     public APIHelper(AuthInterface authInterface) {
         this.authInterface = authInterface;
@@ -30,6 +32,10 @@ public class APIHelper {
 
     public APIHelper(LocationInterface locationInterface){
         this.locationInterface = locationInterface;
+    }
+
+    public APIHelper(CommonAPIInterface commonAPIInterface){
+        this.commonAPIInterface = commonAPIInterface;
     }
 
     public void signInApiCall(String phoneNumber, String password){
@@ -141,6 +147,34 @@ public class APIHelper {
                     @Override
                     public void onError(ANError anError) {
                         locationInterface.onFailedGettingparkingList();
+                    }
+                });
+    }
+
+    public void getBookingDetails(int userId, int parkingId, int slotDuration, long timeStamp){
+        JSONObject jsonObject = new JSONObject();
+
+        try {
+            jsonObject.put("userId", userId);
+            jsonObject.put("parkingId", parkingId);
+            jsonObject.put("slotDuration", slotDuration);
+            jsonObject.put("inTime", timeStamp);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        Rx2AndroidNetworking.post(newBookingUrl)
+                .addJSONObjectBody(jsonObject)
+                .build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        commonAPIInterface.onSuccessfulHit(response);
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        commonAPIInterface.onFailureAPIHit();
                     }
                 });
     }
