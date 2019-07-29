@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.alokbharti.parkme.Interfaces.RecyclerViewClickListener;
-import com.alokbharti.parkme.ParkingInfo;
+import com.alokbharti.parkme.Pojo.ParkingInfo;
 import com.alokbharti.parkme.R;
 
 import java.util.List;

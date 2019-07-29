@@ -1,4 +1,4 @@
-package com.alokbharti.parkme;
+package com.alokbharti.parkme.Pojo;
 
 public class ParkingInfo {
     private int parkingId;

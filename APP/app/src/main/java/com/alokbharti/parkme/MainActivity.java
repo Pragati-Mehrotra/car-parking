@@ -2,7 +2,6 @@ package com.alokbharti.parkme;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -13,6 +12,7 @@ import android.os.Bundle;
 import com.alokbharti.parkme.Adapter.ParkingAdapter;
 import com.alokbharti.parkme.Interfaces.LocationInterface;
 import com.alokbharti.parkme.Interfaces.RecyclerViewClickListener;
+import com.alokbharti.parkme.Pojo.ParkingInfo;
 import com.alokbharti.parkme.Utilities.APIHelper;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -24,8 +24,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import android.text.TextUtils;
 import android.util.Log;
@@ -224,8 +222,9 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_home) {
+        if (id == R.id.nav_profile) {
             // Handle the camera action
+            startActivity(new Intent(this,ProfileActivity.class));
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {

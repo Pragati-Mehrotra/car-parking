@@ -5,7 +5,10 @@ import android.util.Log;
 import com.alokbharti.parkme.Interfaces.AuthInterface;
 import com.alokbharti.parkme.Interfaces.CommonAPIInterface;
 import com.alokbharti.parkme.Interfaces.LocationInterface;
-import com.alokbharti.parkme.ParkingInfo;
+import com.alokbharti.parkme.Interfaces.ProfileInterface;
+import com.alokbharti.parkme.Pojo.History;
+import com.alokbharti.parkme.Pojo.ParkingInfo;
+import com.alokbharti.parkme.Pojo.UserInfo;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONArrayRequestListener;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
@@ -25,6 +28,7 @@ public class APIHelper {
     private AuthInterface authInterface;
     private LocationInterface locationInterface;
     private CommonAPIInterface commonAPIInterface;
+    private ProfileInterface profileInterface;
 
     public APIHelper(AuthInterface authInterface) {
         this.authInterface = authInterface;
@@ -36,6 +40,10 @@ public class APIHelper {
 
     public APIHelper(CommonAPIInterface commonAPIInterface){
         this.commonAPIInterface = commonAPIInterface;
+    }
+
+    public APIHelper(ProfileInterface profileInterface){
+        this.profileInterface = profileInterface;
     }
 
     public void signInApiCall(String phoneNumber, String password){
@@ -164,17 +172,96 @@ public class APIHelper {
         }
 
         Rx2AndroidNetworking.post(newBookingUrl)
-                .addJSONObjectBody(jsonObject)
+        .addJSONObjectBody(jsonObject)
                 .build()
                 .getAsJSONObject(new JSONObjectRequestListener() {
                     @Override
                     public void onResponse(JSONObject response) {
                         commonAPIInterface.onSuccessfulHit(response);
+                        }
+
+                    @Override
+                    public void onError(ANError anError) {
+                                commonAPIInterface.onFailureAPIHit();
+                    }
+                });
+    }
+
+    public void getUserDetails(int userId){
+        final JSONObject jsonObject = new JSONObject();
+        try{
+            jsonObject.put("userId", userId);
+        }catch(JSONException e){
+            e.printStackTrace();
+        }
+
+        Rx2AndroidNetworking.post(userDetailsUrl)
+                .addJSONObjectBody(jsonObject)
+                .build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            UserInfo userInfo = new UserInfo(response.getString("name"),
+                                                            response.getInt("userId"),
+                                                            response.getString("password"),
+                                                            response.getInt("balance"),
+                                                            response.getString("phoneNo"),
+                                                            response.getString("email"));
+                            profileInterface.onGetProfileInfo(userInfo);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
                     }
 
                     @Override
                     public void onError(ANError anError) {
-                        commonAPIInterface.onFailureAPIHit();
+                        System.out.println("----------------------------------------------->>>" + anError.getErrorBody());
+                        profileInterface.onGetProfileInfoFailed();
+                    }
+                });
+    }
+
+    public void getUserHistory(int userId){
+        final JSONObject jsonObject = new JSONObject();
+        try{
+            jsonObject.put("userId", userId);
+        }catch(JSONException e){
+            e.printStackTrace();
+        }
+
+        Rx2AndroidNetworking.post(userHistoryUrl)
+                .build()
+                .getAsJSONArray(new JSONArrayRequestListener() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        List<History> historyList = new ArrayList<>();
+                        for(int i =0; i<response.length();i++){
+                            try {
+                                JSONObject object = response.getJSONObject(i);
+                                History history = new History();
+                                history.setBookingId(object.getInt("bookingId"));
+                                history.setBill(object.getDouble("bill"));
+                                history.setInTime(object.getLong("inTime"));
+                                history.setOutTime(object.getLong("outTime"));
+                                history.setParkingId(object.getInt("parkingId"));
+                                history.setSlotDuration(object.getInt("slotDuration"));
+                                history.setParkingName(object.getString("parkingName"));
+                                history.setStatus(object.getString("status"));
+                                history.setUserId(object.getInt("userId"));
+                                historyList.add(history);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        System.out.println("------------------------------------------->>>" + historyList);
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+
+
                     }
                 });
     }

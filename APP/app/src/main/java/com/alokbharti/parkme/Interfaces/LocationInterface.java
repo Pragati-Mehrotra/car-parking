@@ -1,6 +1,6 @@
 package com.alokbharti.parkme.Interfaces;
 
-import com.alokbharti.parkme.ParkingInfo;
+import com.alokbharti.parkme.Pojo.ParkingInfo;
 
 import java.util.List;
 
