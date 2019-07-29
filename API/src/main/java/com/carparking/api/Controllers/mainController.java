@@ -145,7 +145,7 @@ public class mainController {
     }
 
     @RequestMapping(method = RequestMethod.POST ,value = "/booking/active")
-    public List<Booking> getActiveBookings(@RequestParam Integer userId){
+    public Object getActiveBookings(@RequestParam Integer userId){
         return bookingService.getActiveBookings(userId);
     }
 

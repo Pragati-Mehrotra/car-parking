@@ -112,8 +112,14 @@ public class BookingService implements IBookingService {
     }
 
     @Override
-    public List<Booking> getActiveBookings(Integer userId) {
+    public Object getActiveBookings(Integer userId) {
         List <Booking> bookingList = bookingRepository.findByUserId(userId);
-        return bookingList;
+        if(bookingList.size() > 0) {
+            return bookingList;
+        }
+        else {
+            String error = "You have no Active bookings.";
+            return error;
+        }
     }
 }

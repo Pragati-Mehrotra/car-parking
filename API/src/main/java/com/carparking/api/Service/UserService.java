@@ -35,7 +35,7 @@ public class UserService implements IUserService {
             return users;
         }
         else {
-            String error = "No users are present in the Database";
+            String error = "No users are present in the Database.";
             return error;
         }
     }
@@ -46,7 +46,7 @@ public class UserService implements IUserService {
         if (user == null) {
             User newUser = userRepository.findByPhoneNo(phoneNo);
             if (newUser == null) {
-                String error = "You are not registered.Please Sign Up to register yourself";
+                String error = "You are not registered.Please Sign Up to register yourself.";
                 return error;
             }
             else {
@@ -100,17 +100,17 @@ public class UserService implements IUserService {
                     }
                 }
                 else {
-                    error = "Please enter password to complete Sign Up";
+                    error = "Please enter password to complete Sign Up.";
                     return error;
                 }
             }
             else {
-                error = "Please enter phone number to complete Sign Up";
+                error = "Please enter phone number to complete Sign Up.";
                 return error;
             }
         }
         else {
-            error = "Please enter name to complete Sign Up";
+            error = "Please enter name to complete Sign Up.";
             return error;
         }
 
