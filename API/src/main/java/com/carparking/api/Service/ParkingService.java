@@ -8,15 +8,24 @@ import com.carparking.api.Entity.User;
 import com.carparking.api.Repository.*;
 import com.carparking.api.Utils.GeoTools;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-
+import org.springframework.scheduling.annotation.Scheduled;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Date;
+import java.util.concurrent.Executor;
 //import org.joda.time.Instant;
 
 @Service
 public class ParkingService implements IParkingService {
+//    @Autowired
+//    @Qualifier("scheduler")
+//    private Executor scheduleExecutor () {
+//
+//    }
+
 
     @Autowired
     ParkingRepository parkingRepository;
@@ -39,6 +48,21 @@ public class ParkingService implements IParkingService {
     @Autowired
     UserRepository userRepository;
 
+//    @Scheduled(fixedDelay = 10000)
+//    public void runScheduler() {
+//        List<Parking> parkings = parkingRepository.findAllBy();
+//        System.out.println("---------" + parkings);
+//    }
+
+//    @Async("scheduler")
+//    public void scheduleCall() {
+//        try {
+//            runScheduler();
+//        }
+//        catch(Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
     @Override
     public List<Parking> getParkings(){
         return parkingRepository.findAllBy();

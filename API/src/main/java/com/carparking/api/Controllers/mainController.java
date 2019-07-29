@@ -71,7 +71,10 @@ public class mainController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/user/email")
-    public Object addEmail(@RequestParam Integer userId, @RequestParam String email) throws IOException{
+    public Object addEmail(@RequestBody String request) throws IOException{
+        JsonNode reqNode = mapper.readTree(request);
+        Integer userId = reqNode.get("userId").asInt();
+        String email = reqNode.get("email").asText();
         return userService.saveUserEmail(userId, email);
     }
 
@@ -81,12 +84,16 @@ public class mainController {
     }
 
     @RequestMapping(method = RequestMethod.POST ,value = "/user/details")
-    public Object getUserDetails(@RequestParam Integer userId){
+    public Object getUserDetails(@RequestBody String request) throws IOException{
+        JsonNode reqNode = mapper.readTree(request);
+        Integer userId = reqNode.get("userId").asInt();
         return userService.getUser(userId);
     }
 
     @RequestMapping(method = RequestMethod.POST ,value = "/user/history")
-    public Object getUserHistory(Integer userId){
+    public Object getUserHistory(@RequestBody String request) throws IOException{
+        JsonNode reqNode = mapper.readTree(request);
+        Integer userId = reqNode.get("userId").asInt();
         return userService.getUserHistory(userId);
     }
 
@@ -98,7 +105,7 @@ public class mainController {
     }
 
     @RequestMapping(method = RequestMethod.POST ,value = "/parking/nearby")
-    public @ResponseBody List<Parking> getNearbyParkings(@RequestBody String request)throws IOException {
+    public @ResponseBody List<Parking> getNearbyParkings(@RequestBody String request) throws IOException {
 
         JsonNode reqNode = mapper.readTree(request);
         Double latitude = reqNode.get("latitude").asDouble();
@@ -109,12 +116,12 @@ public class mainController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/parking/register")
-    public @ResponseBody Parking registerParking(@RequestBody Parking parking)throws IOException {
+    public @ResponseBody Parking registerParking(@RequestBody Parking parking) throws IOException {
         return parkingService.saveParking(parking);
     }
 
     @RequestMapping(method = RequestMethod.POST ,value = "/parking/driveIn")
-    public @ResponseBody String driveIn(@RequestBody String request)throws IOException{
+    public @ResponseBody String driveIn(@RequestBody String request) throws IOException{
 
         JsonNode reqNode = mapper.readTree(request);
         Integer parkingId = reqNode.get("parkingId").asInt();
@@ -124,7 +131,7 @@ public class mainController {
     }
 
     @RequestMapping(method = RequestMethod.POST ,value = "/parking/driveOut")
-    public @ResponseBody Object driveOut(@RequestBody String request)throws IOException{
+    public @ResponseBody Object driveOut(@RequestBody String request) throws IOException{
 
         JsonNode reqNode = mapper.readTree(request);
         Integer parkingId = reqNode.get("parkingId").asInt();
@@ -135,30 +142,43 @@ public class mainController {
     //--------------------------------------------- Booking starts here ----------------------------------------------
 
     @RequestMapping(method = RequestMethod.POST, value = "/booking/new")
-    public @ResponseBody Booking registerBooking(@RequestBody Booking booking)throws IOException {
+    public @ResponseBody Booking registerBooking(@RequestBody Booking booking) throws IOException {
         return bookingService.saveBooking(booking);
     }
 
     @RequestMapping(method = RequestMethod.POST ,value = "/booking/details")
-    public Object getBookingDetails(@RequestParam Integer bookingId){
+    public Object getBookingDetails(@RequestBody String request) throws IOException{
+        JsonNode reqNode = mapper.readTree(request);
+        Integer bookingId = reqNode.get("bookingId").asInt();
         return bookingService.getBookingById(bookingId);
     }
 
     @RequestMapping(method = RequestMethod.POST ,value = "/booking/active")
-    public Object getActiveBookings(@RequestParam Integer userId){
+    public Object getActiveBookings(@RequestBody String request) throws IOException{
+        JsonNode reqNode = mapper.readTree(request);
+        Integer userId = reqNode.get("userId").asInt();
         return bookingService.getActiveBookings(userId);
     }
 
 
     @RequestMapping(method = RequestMethod.POST ,value = "/booking/checkout")
-    public Booking getCheckoutOtp(@RequestParam Integer bookingId){
+    public Booking getCheckoutOtp(@RequestBody String request) throws IOException{
+        JsonNode reqNode = mapper.readTree(request);
+        Integer bookingId = reqNode.get("bookingId").asInt();
         return bookingService.checkout(bookingId);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/booking/cancel")
-    public History cancelBooking(@RequestParam Integer bookingId){
+    public History cancelBooking(@RequestBody String request) throws IOException{
+        JsonNode reqNode = mapper.readTree(request);
+        Integer bookingId = reqNode.get("bookingId").asInt();
         return bookingService.cancelBooking(bookingId);
     }
     //--------------------------------------------- History starts here ----------------------------------------------
+
+//    @RequestMapping(method = RequestMethod.GET, value = "/scheduler")
+//    public void scheduler(){
+//         parkingService.scheduleCall();
+//    }
 }
 
