@@ -4,9 +4,9 @@ import com.carparking.api.Entity.History;
 import com.carparking.api.Entity.Parking;
 import com.carparking.api.Entity.User;
 import com.carparking.api.Repository.*;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-//import org.json.simple.JSONObject;
 import java.util.List;
 
 
@@ -31,13 +31,7 @@ public class UserService implements IUserService {
     @Override
     public Object getAllUsers() {
         List<User> users =  userRepository.findAllBy();
-        if (users.size() > 0) {
-            return users;
-        }
-        else {
-            String error = "No users are present in the Database.";
-            return error;
-        }
+        return users;
     }
 
     @Override
@@ -46,12 +40,14 @@ public class UserService implements IUserService {
         if (user == null) {
             User newUser = userRepository.findByPhoneNo(phoneNo);
             if (newUser == null) {
-                String error = "You are not registered.Please Sign Up to register yourself.";
-                return error;
+                JSONObject message = new JSONObject();
+                message.put("error","You are not registered.Please Sign Up to register yourself.");
+                return message;
             }
             else {
-                String error = "Password is incorrect.Please enter your registered password.";
-                return error;
+                JSONObject message = new JSONObject();
+                message.put("error","Password is incorrect.Please enter your registered password.");
+                return message;
             }
         }
         else {
@@ -63,8 +59,9 @@ public class UserService implements IUserService {
     public Object getUser(Integer userId){
         User user = userRepository.findByUserId(userId);
         if (user == null) {
-            String error = "User with given user Id does not exist. Please send registered User Id.";
-            return error;
+            JSONObject message = new JSONObject();
+            message.put("error","User with given user Id does not exist. Please send registered User Id.");
+            return message;
         }
         else {
             return user;
@@ -73,7 +70,8 @@ public class UserService implements IUserService {
 
     @Override
     public Object saveUser(User user){
-        String error = "Something went wrong.Please try again.";
+        JSONObject message = new JSONObject();
+        String error = "";
         if (user.getName() != null) {
             if (user.getPhoneNo() != null) {
                 if (user.getPassword() != null) {
@@ -82,8 +80,8 @@ public class UserService implements IUserService {
                         if (user.getEmail()!= null) {
                             existingUser = userRepository.findByEmail(user.getEmail());
                             if (existingUser != null) {
-                                error = "Entered email is already registered. " + "\nPlease Login to your existing account or create a new account with a new email.";
-                                return error;
+                                message.put("error","Entered email is already registered. Please Login to your existing account or create a new account with a new email.");
+                                return message;
                             }
                         }
                         user.setBalance(0);
@@ -91,27 +89,28 @@ public class UserService implements IUserService {
                         if (savedUser != null) {
                             return savedUser;
                         } else {
-                            return error;
+                            message.put("error","Something went wrong.Please try again.");
+                            return message;
                         }
                     }
                     else {
-                        error = "Entered phone number is already registered. " + "\nPlease Login to your existing account or create a new account with a new phone number.";
-                        return error;
+                        message.put("error","Entered phone number is already registered. Please Login to your existing account or create a new account with a new phone number.");
+                        return message;
                     }
                 }
                 else {
-                    error = "Please enter password to complete Sign Up.";
-                    return error;
+                    message.put("error","Please enter password to complete Sign Up.");
+                    return message;
                 }
             }
             else {
-                error = "Please enter phone number to complete Sign Up.";
-                return error;
+                message.put("error","Please enter phone number to complete Sign Up.");
+                return message;
             }
         }
         else {
-            error = "Please enter name to complete Sign Up.";
-            return error;
+            message.put("error","Please enter name to complete Sign Up.");
+            return message;
         }
 
     }
@@ -119,20 +118,14 @@ public class UserService implements IUserService {
     @Override
     public Object getUserHistory(Integer userId) {
         List <History> userHistory = historyRepository.findHistoryByUserId(userId);
-        if (userHistory.size() > 0 ) {
-            for (int i = 0; i < userHistory.size(); i++) {
-                History history = userHistory.get(i);
-                Parking parking = parkingRepository.findByParkingId(history.getParkingId());
-                String parkingName = parking.getParkingName();
-                history.setParkingName(parkingName);
+        for (int i = 0; i < userHistory.size(); i++) {
+            History history = userHistory.get(i);
+            Parking parking = parkingRepository.findByParkingId(history.getParkingId());
+            String parkingName = parking.getParkingName();
+            history.setParkingName(parkingName);
 
-            }
-            return userHistory;
         }
-        else {
-            String error = "Sorry, You had no bookings till now.";
-            return error;
-        }
+        return userHistory;
     }
 
     @Override
@@ -146,13 +139,15 @@ public class UserService implements IUserService {
                 return savedUser;
             }
             else {
-                String error = "Something went wrong.Please try again.";
-                return error;
+                JSONObject message = new JSONObject();
+                message.put("error","Something went wrong.Please try again.");
+                return message;
             }
         }
         else {
-            String error = "User with given email already exist. Please enter another email.";
-            return error;
+            JSONObject message = new JSONObject();
+            message.put("error","User with given email already exist. Please enter another email.");
+            return message;
         }
     }
 

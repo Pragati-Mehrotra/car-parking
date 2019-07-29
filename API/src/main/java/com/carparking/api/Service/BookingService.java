@@ -8,6 +8,7 @@ import com.carparking.api.Repository.ParkingCrudRepository;
 import com.carparking.api.Repository.BookingRepository;
 import com.carparking.api.Repository.ParkingRepository;
 import com.carparking.api.Repository.HistoryCrudRepository;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -65,8 +66,9 @@ public class BookingService implements IBookingService {
             return booking;
         }
         else {
-            String error = "Booking Id does not exist.Please enter a valid booking Id.";
-            return error;
+            JSONObject message = new JSONObject();
+            message.put("error","Booking Id does not exist.Please enter a valid booking Id.");
+            return message;
         }
     }
 
@@ -114,12 +116,6 @@ public class BookingService implements IBookingService {
     @Override
     public Object getActiveBookings(Integer userId) {
         List <Booking> bookingList = bookingRepository.findByUserId(userId);
-        if(bookingList.size() > 0) {
-            return bookingList;
-        }
-        else {
-            String error = "You have no Active bookings.";
-            return error;
-        }
+        return bookingList;
     }
 }
