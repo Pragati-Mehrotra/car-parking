@@ -132,7 +132,6 @@ public class mainController {
         JsonNode reqNode = mapper.readTree(request);
         Integer parkingId = reqNode.get("parkingId").asInt();
         Integer outOtp = reqNode.get("outOtp").asInt();
-        System.out.println("---------------------------------------"+ parkingId + outOtp);
         return parkingService.driveOut(parkingId, outOtp);
     }
 
