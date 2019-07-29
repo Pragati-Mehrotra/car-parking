@@ -15,7 +15,7 @@ public interface IBookingService {
 
     public Booking checkout(Integer bookingId);
 
-    public Booking getBookingById(Integer bookingId);
+    public Object getBookingById(Integer bookingId);
 
     public List<Booking> getActiveBookings(Integer userId);
 }

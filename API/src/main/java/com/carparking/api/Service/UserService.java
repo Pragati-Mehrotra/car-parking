@@ -47,7 +47,6 @@ public class UserService implements IUserService {
 
     public User saveUser(User user){
         user.setBalance(0);
-        System.out.println("------------------------------------------------------------------------" + user.toString());
         userCrudRepository.save(user);
         return user;
     }

@@ -84,8 +84,8 @@ public class mainController {
     }
 
     @RequestMapping(method = RequestMethod.POST ,value = "/user/details")
-    public User getUserDetails(@RequestParam Integer user_id){
-        return userService.getUser(user_id);
+    public User getUserDetails(@RequestParam Integer userId){
+        return userService.getUser(userId);
     }
 
     @RequestMapping(method = RequestMethod.POST ,value = "/user/history")
@@ -132,7 +132,7 @@ public class mainController {
         JsonNode reqNode = mapper.readTree(request);
         Integer parkingId = reqNode.get("parkingId").asInt();
         Integer outOtp = reqNode.get("outOtp").asInt();
-
+        System.out.println("---------------------------------------"+ parkingId + outOtp);
         return parkingService.driveOut(parkingId, outOtp);
     }
 

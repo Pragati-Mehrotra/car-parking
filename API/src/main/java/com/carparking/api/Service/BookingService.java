@@ -51,18 +51,23 @@ public class BookingService implements IBookingService {
     }
 
     @Override
-    public Booking getBookingById(Integer bookingId) {
+    public Object getBookingById(Integer bookingId) {
         Booking booking = bookingRepository.findByBookingId(bookingId);
-        return booking;
+        if(booking != null) {
+            return booking;
+        }
+        else {
+            String error = "Booking Id does not exist.Please enter a valid booking Id.";
+            return error;
+        }
     }
 
     @Override
     public Booking checkout(Integer bookingId) {
         Booking booking = bookingRepository.findByBookingId(bookingId);
         int randomPin = (int)(Math.random()* 9000)+ 1000;
-        System.out.println("------------" + randomPin);
         booking.setStatus("CheckedOut");
-        booking.setOutOpt(randomPin);
+        booking.setOutOtp(randomPin);
         Booking updatedBooking = bookingCrudRepository.save(booking);
         return updatedBooking;
     }

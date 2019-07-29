@@ -4,6 +4,7 @@ import com.carparking.api.Entity.History;
 import com.carparking.api.Entity.Parking;
 import com.carparking.api.Entity.Booking;
 //import com.carparking.api.Repository.ParkingCrudRepository;
+import com.carparking.api.Entity.User;
 import com.carparking.api.Repository.*;
 import com.carparking.api.Utils.GeoTools;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,12 @@ public class ParkingService implements IParkingService {
 
     @Autowired
     HistoryCrudRepository historyCrudRepository;
+
+    @Autowired
+    UserCrudRepository userCrudRepository;
+
+    @Autowired
+    UserRepository userRepository;
 
     @Override
     public List<Parking> getParkings(){
@@ -78,15 +85,26 @@ public class ParkingService implements IParkingService {
         history.setBookingId(booking.getBookingId());
         history.setParkingId(booking.getParkingId());
         history.setUserId(booking.getUserId());
-        history.setBill(booking.getBill());
         history.setInTime(booking.getInTime());
+        history.setSlotDuration(booking.getSlotDuration());
         Date date = new Date();
         Long outTime = date.getTime();
         booking.setOutTime(outTime);
         history.setOutTime(booking.getOutTime());
+        Long duration = (history.getOutTime() - history.getInTime())/ 3600000;
+        Integer slotDuration = history.getSlotDuration();
+        if (duration > slotDuration) {
+           int extraTime = (int) (duration - history.getSlotDuration());
+           Double bill = (double)extraTime * 10;
+           User user = userRepository.findByUserId(booking.getUserId());
+           Integer balance = (int)(user.getBalance() - bill);
+           user.setBalance(balance);
+           User savedUser = userCrudRepository.save(user);
+           bill = bill + booking.getBill();
+           booking.setBill(bill);
+        }
+        history.setBill(booking.getBill());
         history.setStatus("Closed");
-        history.setSlotDuration(booking.getSlotDuration());
-        System.out.println("---" + history);
         History savedHistory = historyCrudRepository.save(history);
         Integer bookingId = booking.getBookingId();
         bookingCrudRepository.deleteById(bookingId);

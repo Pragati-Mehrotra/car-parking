@@ -100,11 +100,11 @@ public class Booking {
         this.inOtp = inOtp;
     }
 
-    public Integer getOutOpt() {
+    public Integer getOutOtp() {
         return outOtp;
     }
 
-    public void setOutOpt(Integer outOtp) {
+    public void setOutOtp(Integer outOtp) {
         this.outOtp = outOtp;
     }
 
