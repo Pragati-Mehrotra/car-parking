@@ -34,8 +34,16 @@ public class BookingService implements IBookingService {
     @Override
     public Booking saveBooking(Booking booking) {
 
-        int randomPin = (int)(Math.random()* 9000)+ 1000;
-        booking.setInOtp(randomPin);
+        do {
+            int randomPin = (int)(Math.random()* 9000)+ 1000;
+            Booking existingBooking = bookingRepository.findByParkingIdAndInOtp(booking.getParkingId(), randomPin);
+            if(existingBooking == null) {
+                booking.setInOtp(randomPin);
+                break;
+            }
+        }
+        while(booking.getInOtp() == null);
+
         booking.setStatus("Booked");
         Double bill = (double)(booking.getSlotDuration() * 10);
         booking.setBill(bill);
@@ -65,9 +73,17 @@ public class BookingService implements IBookingService {
     @Override
     public Booking checkout(Integer bookingId) {
         Booking booking = bookingRepository.findByBookingId(bookingId);
-        int randomPin = (int)(Math.random()* 9000)+ 1000;
         booking.setStatus("CheckedOut");
-        booking.setOutOtp(randomPin);
+
+        do {
+            int randomPin = (int)(Math.random()* 9000)+ 1000;
+            Booking existingBooking = bookingRepository.findByParkingIdAndOutOtp(booking.getParkingId(), randomPin);
+            if(existingBooking == null) {
+                booking.setOutOtp(randomPin);
+                break;
+            }
+        }
+        while(booking.getOutOtp() == null);
         Booking updatedBooking = bookingCrudRepository.save(booking);
         return updatedBooking;
     }
