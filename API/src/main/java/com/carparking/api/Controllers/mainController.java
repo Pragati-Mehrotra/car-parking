@@ -57,7 +57,7 @@ public class mainController {
 
     @RequestMapping(method = RequestMethod.POST ,value = "/user/login")
     public @ResponseBody
-    User userLogin(@RequestBody String request) throws IOException{
+    Object userLogin(@RequestBody String request) throws IOException{
 
         JsonNode reqNode = mapper.readTree(request);
         String phoneNo = reqNode.get("phoneNo").asText();
@@ -66,30 +66,27 @@ public class mainController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/user/signUp")
-    public User userSignUp(@RequestBody User user) throws IOException{
-
-        user = userService.saveUser(user);
-        return user;
+    public Object userSignUp(@RequestBody User user) throws IOException{
+        return userService.saveUser(user);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/user/email")
-    public User addEmail(@RequestParam Integer userId, @RequestParam String email) throws IOException{
+    public Object addEmail(@RequestParam Integer userId, @RequestParam String email) throws IOException{
         return userService.saveUserEmail(userId, email);
     }
 
     @RequestMapping(method = RequestMethod.POST ,value = "/user/all")
-    public List<User> userGetAll(){
-        List<User> users = userService.getAllUsers();
-        return users;
+    public Object userGetAll(){
+        return userService.getAllUsers();
     }
 
     @RequestMapping(method = RequestMethod.POST ,value = "/user/details")
-    public User getUserDetails(@RequestParam Integer userId){
+    public Object getUserDetails(@RequestParam Integer userId){
         return userService.getUser(userId);
     }
 
     @RequestMapping(method = RequestMethod.POST ,value = "/user/history")
-    public List<History> getUserHistory(Integer userId){
+    public Object getUserHistory(Integer userId){
         return userService.getUserHistory(userId);
     }
 

@@ -7,10 +7,10 @@ import java.util.List;
 
 public interface IUserService {
 
-    public List<User> getAllUsers();
-    public User userLogin(String phoneNo, String password);
-    public User getUser(Integer userId);
-    public User saveUser(User user);
-    public List<History> getUserHistory(Integer userId);
-    public User saveUserEmail(Integer userId, String email);
+    public Object getAllUsers();
+    public Object userLogin(String phoneNo, String password);
+    public Object getUser(Integer userId);
+    public Object saveUser(User user);
+    public Object getUserHistory(Integer userId);
+    public Object saveUserEmail(Integer userId, String email);
 }
