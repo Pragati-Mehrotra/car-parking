@@ -118,13 +118,6 @@ public class UserService implements IUserService {
     @Override
     public Object getUserHistory(Integer userId) {
         List <History> userHistory = historyRepository.findHistoryByUserId(userId);
-        for (int i = 0; i < userHistory.size(); i++) {
-            History history = userHistory.get(i);
-            Parking parking = parkingRepository.findByParkingId(history.getParkingId());
-            String parkingName = parking.getParkingName();
-            history.setParkingName(parkingName);
-
-        }
         return userHistory;
     }
 
