@@ -2,21 +2,30 @@ package com.alokbharti.parkme;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 
 import com.alokbharti.parkme.Adapter.ParkingAdapter;
 import com.alokbharti.parkme.Interfaces.LocationInterface;
+import com.alokbharti.parkme.Interfaces.RecyclerViewClickListener;
+import com.alokbharti.parkme.Pojo.ParkingInfo;
 import com.alokbharti.parkme.Utilities.APIHelper;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 
@@ -38,16 +47,19 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.Menu;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.List;
 
 import static com.alokbharti.parkme.Utilities.GlobalConstants.currentUserId;
 import static com.alokbharti.parkme.Utilities.SavedSharedPreferences.setUserId;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, LocationInterface {
+        implements NavigationView.OnNavigationItemSelectedListener, LocationInterface, RecyclerViewClickListener, OnMapReadyCallback {
 
     private FusedLocationProviderClient fusedLocationClient;
     private int MY_PERMISSION_REQUEST_LOCATION = 1000;
@@ -55,8 +67,13 @@ public class MainActivity extends AppCompatActivity
     private APIHelper apiHelper;
     private RecyclerView parkingRecyclerView;
     private ParkingAdapter parkingAdapter;
-    private View.OnClickListener clickListener;
     private double latitude, longitude;
+    Button searchAddressButton;
+    EditText searchAddressEditText;
+    TextView latLong;
+    private GoogleMap mMap;
+    private Marker marker;
+    private List<ParkingInfo> allParkingList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,23 +99,59 @@ public class MainActivity extends AppCompatActivity
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSION_REQUEST_LOCATION);
         }else{
             Log.e("permission granted","yes");
-            getLatLongFromGPS();
+            getparkinglistFromGPS();
         }
+
+        latLong = findViewById(R.id.debugging_lat_long);
 
         parkingRecyclerView = findViewById(R.id.parkingRecyclerView);
         parkingRecyclerView.setHasFixedSize(true);
         parkingRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        clickListener = new View.OnClickListener() {
+        searchAddressButton = findViewById(R.id.search_address_button);
+        searchAddressEditText = findViewById(R.id.location_search_edit_text);
+        searchAddressButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                String address = searchAddressEditText.getText().toString();
+                if(TextUtils.isEmpty(address)){
+                    searchAddressEditText.setError("This is required");
+                    return;
+                }else{
+                    getParkingListFromAddress(address);
+                }
             }
-        };
+        });
+
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        final SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+
+    }
+
+    private void getParkingListFromAddress(String userAddress){
+        Geocoder coder = new Geocoder(this);
+        try {
+            List<Address> address = coder.getFromLocationName(userAddress, 5);
+            if (address==null) {
+                Toast.makeText(this, "Failed to get parking slots at this location", Toast.LENGTH_LONG).show();
+            }else {
+                Address location = address.get(0);
+                latitude = location.getLatitude();
+                longitude = location.getLongitude();
+                marker.setPosition(new LatLng(latitude, longitude));
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude)));
+                latLong.setText("Latitude: " + latitude + ", Longitude: " + longitude);
+                apiHelper.getParkingNearby(latitude, longitude);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @SuppressLint("MissingPermission")
-    private void getLatLongFromGPS(){
+    private void getparkinglistFromGPS(){
         fusedLocationClient.getLastLocation()
                 .addOnSuccessListener(this, new OnSuccessListener<Location>() {
                     @Override
@@ -106,9 +159,10 @@ public class MainActivity extends AppCompatActivity
                         // Got last known location. In some rare situations this can be null.
                         if (location != null) {
                             // Logic to handle location object
-                            TextView latLong = findViewById(R.id.debugging_lat_long);
                             latitude = location.getLatitude();
                             longitude = location.getLongitude();
+                            marker.setPosition(new LatLng(latitude, longitude));
+                            mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude)));
                             latLong.setText("Latitude: "+latitude+", Longitude: "+longitude);
                             apiHelper.getParkingNearby(latitude, longitude);
                         }else{
@@ -122,7 +176,7 @@ public class MainActivity extends AppCompatActivity
         if(requestCode == MY_PERMISSION_REQUEST_LOCATION){
             if(grantResults.length >0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 // permission was granted
-                getLatLongFromGPS();
+                getparkinglistFromGPS();
             }else{
                 Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
             }
@@ -168,8 +222,9 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_home) {
+        if (id == R.id.nav_profile) {
             // Handle the camera action
+            startActivity(new Intent(this,ProfileActivity.class));
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {
@@ -190,10 +245,11 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onGetParkingList(List<ParkingInfo> parkingList) {
         Log.e("parking succesful", ":)");
+        allParkingList = parkingList;
         if(parkingList.size()==0){
             Toast.makeText(this, "No parking slots available in your area", Toast.LENGTH_SHORT).show();
         }else {
-            parkingAdapter = new ParkingAdapter(parkingList, clickListener);
+            parkingAdapter = new ParkingAdapter(parkingList, this);
             parkingRecyclerView.setAdapter(parkingAdapter);
         }
     }
@@ -201,5 +257,25 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onFailedGettingparkingList() {
         Toast.makeText(this, "Failed to get parking list", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void recyclerViewListClicked(View v, int position) {
+        ParkingInfo parkingInfo = allParkingList.get(position);
+        Intent intent = new Intent(this, BookingActivity.class);
+        intent.putExtra("parking_id", parkingInfo.getParkingId());
+        intent.putExtra("parking_address", parkingInfo.getParkingAddress());
+        startActivity(intent);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+        LatLng latLng = new LatLng(latitude, longitude);
+        marker = mMap.addMarker(new MarkerOptions()
+                .position(latLng)
+                .title("Bike current location"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        mMap.setMinZoomPreference(13.0f);
     }
 }

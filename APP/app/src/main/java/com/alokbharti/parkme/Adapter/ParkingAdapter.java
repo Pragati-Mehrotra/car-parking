@@ -1,5 +1,6 @@
 package com.alokbharti.parkme.Adapter;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +10,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.alokbharti.parkme.ParkingInfo;
+import com.alokbharti.parkme.Interfaces.RecyclerViewClickListener;
+import com.alokbharti.parkme.Pojo.ParkingInfo;
 import com.alokbharti.parkme.R;
 
 import java.util.List;
@@ -17,11 +19,11 @@ import java.util.List;
 public class ParkingAdapter extends RecyclerView.Adapter<ParkingAdapter.ViewHolder> {
 
     private List<ParkingInfo> parkingInfoList;
-    private View.OnClickListener onClickListener;
+    private RecyclerViewClickListener itemListener;
 
-    public ParkingAdapter(List<ParkingInfo> parkingInfoList, View.OnClickListener onClickListener) {
+    public ParkingAdapter(List<ParkingInfo> parkingInfoList, RecyclerViewClickListener itemListener) {
         this.parkingInfoList = parkingInfoList;
-        onClickListener = onClickListener;
+        this.itemListener = itemListener;
     }
 
     @NonNull
@@ -38,7 +40,6 @@ public class ParkingAdapter extends RecyclerView.Adapter<ParkingAdapter.ViewHold
         holder.parkingAddress.setText(parkingInfo.getParkingAddress());
         holder.availableSlots.setText(String.valueOf(parkingInfo.getAvailableSlots()));
         holder.totalSlots.setText(String.valueOf(parkingInfo.getTotalSlots()));
-        holder.parkingLinearLayout.setOnClickListener(onClickListener);
     }
 
     @Override
@@ -46,7 +47,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<ParkingAdapter.ViewHold
         return parkingInfoList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         LinearLayout parkingLinearLayout;
         TextView parkingName;
         TextView parkingAddress;
@@ -61,6 +62,14 @@ public class ParkingAdapter extends RecyclerView.Adapter<ParkingAdapter.ViewHold
             parkingAddress = itemView.findViewById(R.id.parkingAddress);
             availableSlots = itemView.findViewById(R.id.parkingAvailableSlots);
             totalSlots = itemView.findViewById(R.id.parkingTotalSlots);
+
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            Log.e("in adapter", "onclick");
+            itemListener.recyclerViewListClicked(view, this.getPosition());
         }
     }
 }

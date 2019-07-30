@@ -12,3 +12,5 @@
 /captures
 .externalNativeBuild
 .DS_Store
+Gradle__
+workspace.xml
