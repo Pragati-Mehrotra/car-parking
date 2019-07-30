@@ -223,6 +223,8 @@ public class mainController {
                 "          xhttp.onreadystatechange = function() {\n" +
                 "            if (this.readyState == 4 && this.status == 200) {\n" +
                 "              document.getElementById(\"response\").innerHTML = this.responseText;\n" +
+                "              document.getElementById(\"parkingId\").value = '';\n" +
+                "              document.getElementById(\"inOtp\").value = '';\n" +
                 "            }\n" +
                 "          }\n" +
                 "          xhttp.open(\"POST\", \"http://localhost:5433/parking/driveIn\", true);\n" +
@@ -283,6 +285,8 @@ public class mainController {
                 "          xhttp.onreadystatechange = function() {\n" +
                 "            if (this.readyState == 4 && this.status == 200) {\n" +
                 "              document.getElementById(\"response\").innerHTML = this.responseText;\n" +
+                "              document.getElementById(\"parkingId\").value = '';\n" +
+                "              document.getElementById(\"outOtp\").value = '';\n" +
                 "            }\n" +
                 "          }\n" +
                 "          xhttp.open(\"POST\", \"http://localhost:5433/parking/driveOut\", true);\n" +
