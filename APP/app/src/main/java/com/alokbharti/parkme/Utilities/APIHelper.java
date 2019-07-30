@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.alokbharti.parkme.Interfaces.AuthInterface;
 import com.alokbharti.parkme.Interfaces.CommonAPIInterface;
+import com.alokbharti.parkme.Interfaces.HistoryInterface;
 import com.alokbharti.parkme.Interfaces.LocationInterface;
 import com.alokbharti.parkme.Interfaces.ProfileInterface;
 import com.alokbharti.parkme.Pojo.History;
@@ -29,6 +30,7 @@ public class APIHelper {
     private LocationInterface locationInterface;
     private CommonAPIInterface commonAPIInterface;
     private ProfileInterface profileInterface;
+    private HistoryInterface historyInterface;
 
     public APIHelper(AuthInterface authInterface) {
         this.authInterface = authInterface;
@@ -44,6 +46,10 @@ public class APIHelper {
 
     public APIHelper(ProfileInterface profileInterface){
         this.profileInterface = profileInterface;
+    }
+
+    public APIHelper(HistoryInterface historyInterface){
+        this.historyInterface = historyInterface;
     }
 
     public void signInApiCall(String phoneNumber, String password){
@@ -232,6 +238,7 @@ public class APIHelper {
         }
 
         Rx2AndroidNetworking.post(userHistoryUrl)
+                .addJSONObjectBody(jsonObject)
                 .build()
                 .getAsJSONArray(new JSONArrayRequestListener() {
                     @Override
@@ -242,9 +249,11 @@ public class APIHelper {
                                 JSONObject object = response.getJSONObject(i);
                                 History history = new History();
                                 history.setBookingId(object.getInt("bookingId"));
-                                history.setBill(object.getDouble("bill"));
+                                if(object.has("bill") && !object.isNull("bill"))
+                                    history.setBill(object.getDouble("bill"));
                                 history.setInTime(object.getLong("inTime"));
-                                history.setOutTime(object.getLong("outTime"));
+                                if(object.has("outTime") && !object.isNull("outTime"))
+                                    history.setOutTime(object.getLong("outTime"));
                                 history.setParkingId(object.getInt("parkingId"));
                                 history.setSlotDuration(object.getInt("slotDuration"));
                                 history.setParkingName(object.getString("parkingName"));
@@ -255,12 +264,14 @@ public class APIHelper {
                                 e.printStackTrace();
                             }
                         }
+                        historyInterface.onGetHistorySuccess(historyList);
                         System.out.println("------------------------------------------->>>" + historyList);
                     }
 
                     @Override
                     public void onError(ANError anError) {
-
+                        System.out.println(anError.getErrorBody());
+                        historyInterface.onGetHistoryFailed();
 
                     }
                 });
