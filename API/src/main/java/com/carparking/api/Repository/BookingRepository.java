@@ -13,4 +13,10 @@ public interface BookingRepository extends Repository<Booking, Integer> {
     Booking findByParkingIdAndOutOtp(Integer parkingId, Integer outOtp);
 
     List<Booking> findByUserId(Integer userId);
+
+    Booking findByInOtp(Integer inOtp);
+
+    Booking findByOutOtp(Integer outOtp);
+
+    List<Booking> findByParkingId(Integer parkingId);
 }

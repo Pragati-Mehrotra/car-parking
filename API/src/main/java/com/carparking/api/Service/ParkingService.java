@@ -54,7 +54,7 @@ public class ParkingService implements IParkingService {
 //        System.out.println("---------" + parkings);
 //    }
 
-//    @Async("scheduler")
+    //    @Async("scheduler")
 //    public void scheduleCall() {
 //        try {
 //            runScheduler();
@@ -64,7 +64,7 @@ public class ParkingService implements IParkingService {
 //        }
 //    }
     @Override
-    public List<Parking> getParkings(){
+    public List<Parking> getParkings() {
         return parkingRepository.findAllBy();
     }
 
@@ -73,75 +73,103 @@ public class ParkingService implements IParkingService {
         List<Parking> allParkings = parkingRepository.findAllBy();
         List<Parking> nearbyParkings = new ArrayList<>();
         System.out.println("---------------------------------------->>>Total parkings : " + allParkings.size());
-        for(Parking parking: allParkings){
+        for (Parking parking : allParkings) {
             double plat = parking.getLatitude();
             double plon = parking.getLongitude();
-            double distance = GeoTools.getGeoDistance(latitude,plat,longitude, plon);
+            double distance = GeoTools.getGeoDistance(latitude, plat, longitude, plon);
             System.out.println("---------------------------------------->>>distance : " + distance);
-            if((int)distance <= radius)
+            if ((int) distance <= radius)
                 nearbyParkings.add(parking);
         }
         return nearbyParkings;
     }
 
     @Override
-    public Parking saveParking(Parking parking){
+    public Parking saveParking(Parking parking) {
         return parkingCrudRepository.save(parking);
     }
 
     @Override
     public String driveIn(Integer parkingId, Integer inOtp) {
-        Booking booking = bookingRepository.findByParkingIdAndInOtp(parkingId, inOtp);
-        booking.setStatus("Parked");
-        Booking savedBooking = bookingCrudRepository.save(booking);
-        if(savedBooking != null) {
-            return "Drive in successfull";
-        }
-        else {
-            return "Drive in failed";
+        List<Booking> existingBooking = bookingRepository.findByParkingId(parkingId);
+        if (existingBooking.size() == 0) {
+            return "Invalid ParkingId. Please Enter valid parking Id.";
+        } else {
+            Booking booking = bookingRepository.findByInOtp(inOtp);
+            if (booking == null) {
+                return "Invalid OTP. Please Enter valid OTP.";
+            } else {
+                booking = bookingRepository.findByParkingIdAndInOtp(parkingId, inOtp);
+                if (booking != null) {
+                    booking.setStatus("Parked");
+                    Booking savedBooking = bookingCrudRepository.save(booking);
+                    if (savedBooking != null) {
+                        return "Drive in successfull.";
+                    } else {
+                        return "success Something went wrong. Please try again.";
+                    }
+                } else {
+                    return "Something went wrong. Please try again.";
+                }
+            }
         }
     }
 
     @Override
     public String driveOut(Integer parkingId, Integer outOtp) {
-        Booking booking = bookingRepository.findByParkingIdAndOutOtp(parkingId, outOtp);
-        History history = new History();
-        history.setBookingId(booking.getBookingId());
-        history.setParkingId(booking.getParkingId());
-        history.setUserId(booking.getUserId());
-        history.setInTime(booking.getInTime());
-        history.setSlotDuration(booking.getSlotDuration());
-        Date date = new Date();
-        Long outTime = date.getTime();
-        booking.setOutTime(outTime);
-        history.setOutTime(booking.getOutTime());
-        Long duration = (history.getOutTime() - history.getInTime())/ 3600000;
-        Integer slotDuration = history.getSlotDuration();
-        if (duration > slotDuration) {
-           int extraTime = (int) (duration - history.getSlotDuration());
-           Double bill = (double)extraTime * 10;
-           User user = userRepository.findByUserId(booking.getUserId());
-           Integer balance = (int)(user.getBalance() - bill);
-           user.setBalance(balance);
-           User savedUser = userCrudRepository.save(user);
-           bill = bill + booking.getBill();
-           booking.setBill(bill);
-        }
-        history.setBill(booking.getBill());
-        history.setStatus("Closed");
-        History savedHistory = historyCrudRepository.save(history);
-        Integer bookingId = booking.getBookingId();
-        bookingCrudRepository.deleteById(bookingId);
-        if(savedHistory != null) {
-            Parking parking = parkingRepository.findByParkingId(parkingId);
-            Integer availableSlots = parking.getAvailableSlots() + 1;
-            parking.setAvailableSlots(availableSlots);
-            Parking savedParking = parkingCrudRepository.save(parking);
-            return "Drive out successfull";
-        }
-        else {
-            return "Drive out failed";
-        }
-    }
 
+        List<Booking> existingBooking = bookingRepository.findByParkingId(parkingId);
+        if (existingBooking.size() == 0) {
+            return "Invalid ParkingId. Please Enter valid parking Id.";
+        } else {
+            Booking booking = bookingRepository.findByOutOtp(outOtp);
+            if (booking == null) {
+                return "Invalid OTP. Please Enter valid OTP.";
+            } else {
+                booking = bookingRepository.findByParkingIdAndOutOtp(parkingId, outOtp);
+                if (booking != null) {
+                    History history = new History();
+                    history.setBookingId(booking.getBookingId());
+                    history.setParkingId(booking.getParkingId());
+                    history.setUserId(booking.getUserId());
+                    history.setInTime(booking.getInTime());
+                    history.setSlotDuration(booking.getSlotDuration());
+                    Date date = new Date();
+                    Long outTime = date.getTime();
+                    booking.setOutTime(outTime);
+                    history.setOutTime(booking.getOutTime());
+                    Long duration = (history.getOutTime() - history.getInTime()) / 3600000;
+                    Integer slotDuration = history.getSlotDuration();
+                    if (duration > slotDuration) {
+                        int extraTime = (int) (duration - history.getSlotDuration());
+                        Double bill = (double) extraTime * 10;
+                        User user = userRepository.findByUserId(booking.getUserId());
+                        Integer balance = (int) (user.getBalance() - bill);
+                        user.setBalance(balance);
+                        User savedUser = userCrudRepository.save(user);
+                        bill = bill + booking.getBill();
+                        booking.setBill(bill);
+                    }
+                    history.setBill(booking.getBill());
+                    history.setStatus("Closed");
+                    History savedHistory = historyCrudRepository.save(history);
+                    Integer bookingId = booking.getBookingId();
+                    bookingCrudRepository.deleteById(bookingId);
+                    if (savedHistory != null) {
+                        Parking parking = parkingRepository.findByParkingId(parkingId);
+                        Integer availableSlots = parking.getAvailableSlots() + 1;
+                        parking.setAvailableSlots(availableSlots);
+                        Parking savedParking = parkingCrudRepository.save(parking);
+                        return "Drive out successfull";
+                    } else {
+                        return "Drive out failed";
+                    }
+                } else {
+                    return "Something went wrong. Please try again.";
+                }
+            }
+        }
+
+    }
 }
+

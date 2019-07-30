@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
-
+import java.io.InputStream;
+import org.springframework.util.StreamUtils;
 // import com.carparking.api.Pojo.userLoginRequest;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -175,6 +176,125 @@ public class mainController {
         return bookingService.cancelBooking(bookingId);
     }
     //--------------------------------------------- History starts here ----------------------------------------------
+
+    @RequestMapping(method = RequestMethod.GET ,value = "/parking/driveIn")
+    public String driveIn() {
+
+        return "<!doctype html>\n" +
+                "<html>\n" +
+                "<head>\n" +
+                "    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n" +
+                "    <meta name=\"viewport\" content=\"width=device-width,minimum-scale=1.0, maximum-scale=1.0\" />\n" +
+                "    <title>ParkMe</title>\n" +
+                "    <link rel=\"stylesheet\" href=\"https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css\" integrity=\"sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T\" crossorigin=\"anonymous\">\n" +
+                "    <style>@media screen and (max-device-width:480px){body{-webkit-text-size-adjust:none}}</style>\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "  <div>\n" +
+                "    <div style=\"text-align:center; margin-top: 20px;\">\n" +
+                "        <img src=\"https://lh5.googleusercontent.com/76M0NREkxzv7MUIHZXnv9WhVryfkwjdx9Mge45p2SaugzUVyVw-K5wyej442Sz6IVZXYv7aEOFR9Ug=w1280-h689\">\n" +
+                "    </div> \n" +
+                "    <h1 style=\"text-align:center; margin: 0px\">Welcome to ParkMe</h1>\n" +
+                "    <h6 style=\"text-align:center; margin: 40px;\">Please enter the Parking Id and Entry OTP to open the gate.</h6>\n" +
+                "    <div style=\"display: flex; justify-content: center; margin: 20px;\">\n" +
+                "      <label>Enter Parking Id:  </label>\n" +
+                "      <input id=\"parkingId\" class=\"form-control\" type=\"text\" aria-describedby=\"inputGroup-sizing-sm\" style=\"height:30px;width:300px; margin-left:30px\">\n" +
+                "    </div>\n" +
+                "    <div style=\"display: flex; justify-content: center; margin: 20px;\">\n" +
+                "      <label>Enter Entry OTP:  </label>\n" +
+                "      <input id=\"inOtp\" class=\"form-control\" type=\"text\" aria-describedby=\"inputGroup-sizing-sm\" style=\"height:30px;width:300px; margin-left:30px\">\n" +
+                "    </div>\n" +
+                "    <div style=\"display: flex; justify-content: center; margin: 20px;\">\n" +
+                "      <button type=\"button\" class=\"btn btn-outline-primary\" onclick=\"loadDoc()\">Submit</button>\n" +
+                "    </div>\n" +
+                "    <p id=\"response\" style=\"display: flex; justify-content: center; margin: 20px; color:red\"></p>\n" +
+                "  </div>\n" +
+                "  <script>\n" +
+                "      function loadDoc() {\n" +
+                "        var request = {\n" +
+                "          parkingId: document.getElementById(\"parkingId\").value,\n" +
+                "          inOtp:document.getElementById(\"inOtp\").value\n" +
+                "        }\n" +
+                "        if (request.parkingId == '' || request.inOtp == '') {\n" +
+                "          document.getElementById(\"response\").innerHTML = \"Please fill both the fields.\"\n" +
+                "        }\n" +
+                "        else {\n" +
+                "          var xhttp = new XMLHttpRequest();\n" +
+                "          xhttp.onreadystatechange = function() {\n" +
+                "            if (this.readyState == 4 && this.status == 200) {\n" +
+                "              document.getElementById(\"response\").innerHTML = this.responseText;\n" +
+                "            }\n" +
+                "          }\n" +
+                "          xhttp.open(\"POST\", \"http://localhost:5433/parking/driveIn\", true);\n" +
+                "          xhttp.setRequestHeader(\"Content-type\", \"application/json\");\n" +
+                "          xhttp.send(JSON.stringify(request));\n" +
+                "        }\n" +
+                "      }\n" +
+                "      </script>\n" +
+                "</body>\n" +
+                "</html>";
+    }
+
+
+
+    @RequestMapping(method = RequestMethod.GET ,value = "/parking/driveOut")
+    public String driveOut() {
+
+        return "<!doctype html>\n" +
+                "<html>\n" +
+                "<head>\n" +
+                "    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n" +
+                "    <meta name=\"viewport\" content=\"width=device-width,minimum-scale=1.0, maximum-scale=1.0\" />\n" +
+                "    <title>ParkMe</title>\n" +
+                "    <link rel=\"stylesheet\" href=\"https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css\" integrity=\"sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T\" crossorigin=\"anonymous\">\n" +
+                "    <style>@media screen and (max-device-width:480px){body{-webkit-text-size-adjust:none}}</style>\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "  <div>\n" +
+                "    <div style=\"text-align:center; margin-top: 20px;\">\n" +
+                "        <img src=\"https://lh5.googleusercontent.com/76M0NREkxzv7MUIHZXnv9WhVryfkwjdx9Mge45p2SaugzUVyVw-K5wyej442Sz6IVZXYv7aEOFR9Ug=w1280-h689\">\n" +
+                "    </div> \n" +
+                "    <h1 style=\"text-align:center\">Welcome to ParkMe</h1>\n" +
+                "    <h6 style=\"text-align:center; margin: 40px;\">Please enter the Parking Id and Exit OTP to open the gate.</h6>\n" +
+                "    <div style=\"display: flex; justify-content: center; margin: 20px;\">\n" +
+                "      <label>Enter Parking Id:  </label>\n" +
+                "      <input id=\"parkingId\" class=\"form-control\" type=\"text\" aria-describedby=\"inputGroup-sizing-sm\" style=\"height:30px;width:300px; margin-left:30px\">\n" +
+                "    </div>\n" +
+                "    <div style=\"display: flex; justify-content: center; margin: 20px;\">\n" +
+                "      <label>Enter Exit OTP:  </label>\n" +
+                "      <input id=\"outOtp\" class=\"form-control\" type=\"text\" aria-describedby=\"inputGroup-sizing-sm\" style=\"height:30px;width:300px; margin-left:30px\">\n" +
+                "    </div>\n" +
+                "    <div style=\"display: flex; justify-content: center; margin: 20px;\">\n" +
+                "      <button type=\"button\" class=\"btn btn-outline-primary\" onclick=\"loadDoc()\">Submit</button>\n" +
+                "    </div>\n" +
+                "    <p id=\"response\" style=\"display: flex; justify-content: center; margin: 20px; color:red\"></p>\n" +
+                "  </div>\n" +
+                "  <script>\n" +
+                "      function loadDoc() {\n" +
+                "        var request = {\n" +
+                "          parkingId: document.getElementById(\"parkingId\").value,\n" +
+                "          outOtp:document.getElementById(\"outOtp\").value\n" +
+                "        }\n" +
+                "        if (request.parkingId == '' || request.outOtp == '') {\n" +
+                "          document.getElementById(\"response\").innerHTML = \"Please fill both the fields.\"\n" +
+                "        }\n" +
+                "        else {\n" +
+                "          var xhttp = new XMLHttpRequest();\n" +
+                "          xhttp.onreadystatechange = function() {\n" +
+                "            if (this.readyState == 4 && this.status == 200) {\n" +
+                "              document.getElementById(\"response\").innerHTML = this.responseText;\n" +
+                "            }\n" +
+                "          }\n" +
+                "          xhttp.open(\"POST\", \"http://localhost:5433/parking/driveOut\", true);\n" +
+                "          xhttp.setRequestHeader(\"Content-type\", \"application/json\");\n" +
+                "          xhttp.send(JSON.stringify(request));\n" +
+                "        }\n" +
+                "      }\n" +
+                "      </script>\n" +
+                "</body>\n" +
+                "</html>";
+    }
+
 
 //    @RequestMapping(method = RequestMethod.GET, value = "/scheduler")
 //    public void scheduler(){
