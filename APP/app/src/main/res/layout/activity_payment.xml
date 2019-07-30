@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PaymentActivity"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/amount_to_be_paid_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Amount To be paid: Rs. 30"
+        android:textSize="30sp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:gravity="center">
+
+        <EditText
+            android:id="@+id/coupon_code_et"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Enter coupon code here"/>
+        <Button
+            android:id="@+id/coupon_code_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="apply"/>
+
+    </LinearLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select method"
+        android:textSize="22sp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+        <RadioButton
+            android:id="@+id/google_pay_radiobutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <ImageView
+            android:layout_width="200dp"
+            android:layout_height="150dp"
+            android:background="@drawable/google_pay"/>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/payment_done_button"
+        android:layout_margin="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="proceed to pay"/>
+
+</LinearLayout>
