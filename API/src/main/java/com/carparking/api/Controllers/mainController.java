@@ -227,7 +227,7 @@ public class mainController {
                 "              document.getElementById(\"inOtp\").value = '';\n" +
                 "            }\n" +
                 "          }\n" +
-                "          xhttp.open(\"POST\", \"http://localhost:5433/parking/driveIn\", true);\n" +
+                "          xhttp.open(\"POST\", \"http://52.172.30.204:5433/parking/driveIn\", true);\n" +
                 "          xhttp.setRequestHeader(\"Content-type\", \"application/json\");\n" +
                 "          xhttp.send(JSON.stringify(request));\n" +
                 "        }\n" +
@@ -254,7 +254,7 @@ public class mainController {
                 "<body>\n" +
                 "  <div>\n" +
                 "    <div style=\"text-align:center; margin-top: 20px;\">\n" +
-                "        <img src=\"https://lh5.googleusercontent.com/76M0NREkxzv7MUIHZXnv9WhVryfkwjdx9Mge45p2SaugzUVyVw-K5wyej442Sz6IVZXYv7aEOFR9Ug=w1280-h689\">\n" +
+                "        <img src=\"https://github.com/abhaygupta5/ECommerce/blob/master/newtest/src/images/image1.jpg?raw=true\">\n" +
                 "    </div> \n" +
                 "    <h1 style=\"text-align:center\">Welcome to ParkMe</h1>\n" +
                 "    <h6 style=\"text-align:center; margin: 40px;\">Please enter the Parking Id and Exit OTP to open the gate.</h6>\n" +
@@ -289,7 +289,7 @@ public class mainController {
                 "              document.getElementById(\"outOtp\").value = '';\n" +
                 "            }\n" +
                 "          }\n" +
-                "          xhttp.open(\"POST\", \"http://localhost:5433/parking/driveOut\", true);\n" +
+                "          xhttp.open(\"POST\", \"http://52.172.30.204:5433/parking/driveOut\", true);\n" +
                 "          xhttp.setRequestHeader(\"Content-type\", \"application/json\");\n" +
                 "          xhttp.send(JSON.stringify(request));\n" +
                 "        }\n" +
