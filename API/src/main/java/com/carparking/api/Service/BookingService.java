@@ -3,19 +3,23 @@ package com.carparking.api.Service;
 import com.carparking.api.Entity.Booking;
 import com.carparking.api.Entity.History;
 import com.carparking.api.Entity.Parking;
-import com.carparking.api.Repository.BookingCrudRepository;
-import com.carparking.api.Repository.ParkingCrudRepository;
-import com.carparking.api.Repository.BookingRepository;
-import com.carparking.api.Repository.ParkingRepository;
-import com.carparking.api.Repository.HistoryCrudRepository;
+import com.carparking.api.Entity.User;
+import com.carparking.api.Repository.*;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
 public class BookingService implements IBookingService {
+
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    UserCrudRepository userCrudRepository;
 
     @Autowired
     BookingCrudRepository bookingCrudRepository;
@@ -44,9 +48,30 @@ public class BookingService implements IBookingService {
             }
         }
         while(booking.getInOtp() == null);
-
+        Date date = new Date();
+        Long inTime = date.getTime();
+        booking.setInTime(inTime);
         booking.setStatus("Booked");
-        Double bill = (double)(booking.getSlotDuration() * 10);
+        User user = userRepository.findByUserId(booking.getUserId());
+        Integer previousBalance = user.getBalance();
+        Double bill;
+        if (booking.getSlotDuration() <= 2) {
+            bill = (double)40;
+        }
+        else if (booking.getSlotDuration() > 2 && booking.getSlotDuration() <= 4) {
+            bill = (double)60;
+        }
+        else if (booking.getSlotDuration() > 4 && booking.getSlotDuration() <=8) {
+            bill = (double)80;
+        }
+        else {
+            bill = (double)(80 + (booking.getSlotDuration()-8)*20);
+        }
+        if (previousBalance < 0) {
+            bill = bill - previousBalance;
+            user.setBalance(0);
+            User savedUser = userCrudRepository.save(user);
+        }
         booking.setBill(bill);
         Integer parkingId = booking.getParkingId();
         Booking savedBooking = bookingCrudRepository.save(booking);

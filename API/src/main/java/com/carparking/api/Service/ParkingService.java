@@ -141,14 +141,25 @@ public class ParkingService implements IParkingService {
                     Long duration = (history.getOutTime() - history.getInTime()) / 3600000;
                     Integer slotDuration = history.getSlotDuration();
                     if (duration > slotDuration) {
-                        int extraTime = (int) (duration - history.getSlotDuration());
-                        Double bill = (double) extraTime * 10;
+                        Double newbill;
+                        if (duration <= 2) {
+                            newbill = (double)40;
+                        }
+                        else if (duration > 2 && duration <= 4) {
+                            newbill = (double)60;
+                        }
+                        else if (duration > 4 && duration <=8) {
+                            newbill = (double)80;
+                        }
+                        else {
+                            newbill = (double) (80 + (duration - 8) * 20);
+                        }
+                        Double extraCharge = newbill - booking.getBill();
                         User user = userRepository.findByUserId(booking.getUserId());
-                        Integer balance = (int) (user.getBalance() - bill);
+                        Integer balance = (int) (user.getBalance() - extraCharge);
                         user.setBalance(balance);
                         User savedUser = userCrudRepository.save(user);
-                        bill = bill + booking.getBill();
-                        booking.setBill(bill);
+                        booking.setBill(newbill);
                     }
                     history.setBill(booking.getBill());
                     history.setStatus("Closed");
