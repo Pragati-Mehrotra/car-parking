@@ -15,4 +15,6 @@ public interface IParkingService {
     public String driveIn(Integer parkingId, Integer inOtp);
 
     public String driveOut(Integer parkingId, Integer outOtp);
+
+    public Object getParkingById(Integer parkingId);
 }

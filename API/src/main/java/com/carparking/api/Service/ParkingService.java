@@ -7,6 +7,7 @@ import com.carparking.api.Entity.Booking;
 import com.carparking.api.Entity.User;
 import com.carparking.api.Repository.*;
 import com.carparking.api.Utils.GeoTools;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Async;
@@ -181,6 +182,19 @@ public class ParkingService implements IParkingService {
             }
         }
 
+    }
+
+    @Override
+    public Object getParkingById(Integer parkingId) {
+        Parking parking = parkingRepository.findByParkingId(parkingId);
+        if(parking != null) {
+            return parking;
+        }
+        else {
+            JSONObject message = new JSONObject();
+            message.put("error","Parking Id does not exist.Please enter a valid parking Id.");
+            return message;
+        }
     }
 }
 

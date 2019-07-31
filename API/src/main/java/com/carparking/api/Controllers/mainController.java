@@ -121,6 +121,13 @@ public class mainController {
         return parkingService.saveParking(parking);
     }
 
+    @RequestMapping(method = RequestMethod.POST ,value = "/parking/details")
+    public Object getParkingDetails(@RequestBody String request) throws IOException{
+        JsonNode reqNode = mapper.readTree(request);
+        Integer parkingId = reqNode.get("parkingId").asInt();
+        return parkingService.getParkingById(parkingId);
+    }
+
     @RequestMapping(method = RequestMethod.POST ,value = "/parking/driveIn")
     public @ResponseBody String driveIn(@RequestBody String request) throws IOException{
 
