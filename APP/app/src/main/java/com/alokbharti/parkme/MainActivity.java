@@ -23,10 +23,12 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -37,6 +39,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 
 import android.view.MenuItem;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -53,26 +56,30 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.sql.SQLOutput;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.alokbharti.parkme.Utilities.GlobalConstants.currentUserId;
 import static com.alokbharti.parkme.Utilities.SavedSharedPreferences.setUserId;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, LocationInterface, RecyclerViewClickListener, OnMapReadyCallback {
+        implements NavigationView.OnNavigationItemSelectedListener, LocationInterface, OnMapReadyCallback {
 
     private FusedLocationProviderClient fusedLocationClient;
     private int MY_PERMISSION_REQUEST_LOCATION = 1000;
 
     private APIHelper apiHelper;
-    private RecyclerView parkingRecyclerView;
-    private ParkingAdapter parkingAdapter;
+//    private RecyclerView parkingRecyclerView;
+//    private ParkingAdapter parkingAdapter;
     private double latitude, longitude;
     Button searchAddressButton;
+    FloatingActionButton locationButton;
     EditText searchAddressEditText;
     TextView latLong;
     private GoogleMap mMap;
     private Marker marker;
+    private List<Marker> parkingMarkers;
     private List<ParkingInfo> allParkingList;
 
     @Override
@@ -103,22 +110,47 @@ public class MainActivity extends AppCompatActivity
         }
 
         latLong = findViewById(R.id.debugging_lat_long);
+        parkingMarkers = new ArrayList<>();
 
-        parkingRecyclerView = findViewById(R.id.parkingRecyclerView);
-        parkingRecyclerView.setHasFixedSize(true);
-        parkingRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
+//        parkingRecyclerView = findViewById(R.id.parkingRecyclerView);
+//        parkingRecyclerView.setHasFixedSize(true);
+//        parkingRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        locationButton = findViewById(R.id.locateButton);
         searchAddressButton = findViewById(R.id.search_address_button);
         searchAddressEditText = findViewById(R.id.location_search_edit_text);
-        searchAddressButton.setOnClickListener(new View.OnClickListener() {
+        searchAddressEditText.setOnKeyListener(new View.OnKeyListener() {
             @Override
-            public void onClick(View view) {
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                Log.e("key pressed",String.valueOf(keyCode));
                 String address = searchAddressEditText.getText().toString();
                 if(TextUtils.isEmpty(address)){
                     searchAddressEditText.setError("This is required");
-                    return;
                 }else{
                     getParkingListFromAddress(address);
+                }
+                return false;
+            }
+        });
+        searchAddressButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(MainActivity.this ,ParkingActivity.class);
+                intent.putExtra("latitude",latitude);
+                intent.putExtra("longitude",longitude);
+                startActivity(intent);
+            }
+        });
+        locationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                        ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSION_REQUEST_LOCATION);
+                }else{
+                    Log.e("permission granted","yes");
+                    getparkinglistFromGPS();
                 }
             }
         });
@@ -138,6 +170,8 @@ public class MainActivity extends AppCompatActivity
                 Toast.makeText(this, "Failed to get parking slots at this location", Toast.LENGTH_LONG).show();
             }else {
                 Address location = address.get(0);
+                searchAddressEditText.setText(location.getAddressLine(0));
+                System.out.println(location.toString());
                 latitude = location.getLatitude();
                 longitude = location.getLongitude();
                 marker.setPosition(new LatLng(latitude, longitude));
@@ -158,18 +192,25 @@ public class MainActivity extends AppCompatActivity
                     public void onSuccess(Location location) {
                         // Got last known location. In some rare situations this can be null.
                         if (location != null) {
+                            searchAddressEditText.setText("My location");
                             // Logic to handle location object
                             latitude = location.getLatitude();
                             longitude = location.getLongitude();
                             marker.setPosition(new LatLng(latitude, longitude));
                             mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude)));
-                            latLong.setText("Latitude: "+latitude+", Longitude: "+longitude);
+                            latLong.setText(latitude+", "+longitude);
                             apiHelper.getParkingNearby(latitude, longitude);
                         }else{
                             Log.e("failed to get lat", ":(");
+                            Toast.makeText(MainActivity.this, "Location not found", Toast.LENGTH_SHORT).show();
                         }
                     }
-                });
+                }).addOnFailureListener(this, new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(MainActivity.this, "Location not found", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -178,6 +219,7 @@ public class MainActivity extends AppCompatActivity
             if(grantResults.length >0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 // permission was granted
                 getparkinglistFromGPS();
+                Toast.makeText(this, "Location Found", Toast.LENGTH_SHORT).show();
             }else{
                 Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
             }
@@ -246,28 +288,28 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onGetParkingList(List<ParkingInfo> parkingList) {
-        Log.e("parking succesful", ":)");
+        Log.e("parking succesful", String.valueOf(parkingList.size()));
         allParkingList = parkingList;
         if(parkingList.size()==0){
             Toast.makeText(this, "No parking slots available in your area", Toast.LENGTH_SHORT).show();
         }else {
-            parkingAdapter = new ParkingAdapter(parkingList, this);
-            parkingRecyclerView.setAdapter(parkingAdapter);
+            if(parkingMarkers.size() > 0)
+                for(Marker marker: parkingMarkers)
+                    marker.remove();
+            parkingMarkers.clear();
+            for(ParkingInfo parking: parkingList){
+                LatLng latLng = new LatLng(parking.getLatitude(), parking.getLongitude());
+                Marker m = mMap.addMarker(new MarkerOptions()
+                        .position(latLng)
+                        .title(parking.getParkingName()));
+                parkingMarkers.add(m);
+            }
         }
     }
 
     @Override
     public void onFailedGettingparkingList() {
         Toast.makeText(this, "Failed to get parking list", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void recyclerViewListClicked(View v, int position) {
-        ParkingInfo parkingInfo = allParkingList.get(position);
-        Intent intent = new Intent(this, BookingActivity.class);
-        intent.putExtra("parking_id", parkingInfo.getParkingId());
-        intent.putExtra("parking_address", parkingInfo.getParkingAddress());
-        startActivity(intent);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.alokbharti.parkme.Adapter;
 
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,8 +39,15 @@ public class ParkingAdapter extends RecyclerView.Adapter<ParkingAdapter.ViewHold
         ParkingInfo parkingInfo = parkingInfoList.get(position);
         holder.parkingName.setText(parkingInfo.getParkingName());
         holder.parkingAddress.setText(parkingInfo.getParkingAddress());
-        holder.availableSlots.setText(String.valueOf(parkingInfo.getAvailableSlots()));
-        holder.totalSlots.setText(String.valueOf(parkingInfo.getTotalSlots()));
+        if(parkingInfo.getAvailableSlots() > 0) {
+            holder.availableSlots.setText("AVAILABLE");
+            holder.availableSlots.setTextColor(Color.GREEN);
+        }
+        else{
+            holder.availableSlots.setText("FULL");
+            holder.availableSlots.setTextColor(Color.RED);
+        }
+//        holder.totalSlots.setText(String.valueOf(parkingInfo.getTotalSlots()));
     }
 
     @Override
@@ -48,20 +56,20 @@ public class ParkingAdapter extends RecyclerView.Adapter<ParkingAdapter.ViewHold
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        LinearLayout parkingLinearLayout;
+//        LinearLayout parkingLinearLayout;
         TextView parkingName;
         TextView parkingAddress;
         TextView availableSlots;
-        TextView totalSlots;
+//        TextView totalSlots;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            parkingLinearLayout = itemView.findViewById(R.id.parkingLinearLayout);
+//            parkingLinearLayout = itemView.findViewById(R.id.parkingLinearLayout);
             parkingName = itemView.findViewById(R.id.parkingName);
             parkingAddress = itemView.findViewById(R.id.parkingAddress);
             availableSlots = itemView.findViewById(R.id.parkingAvailableSlots);
-            totalSlots = itemView.findViewById(R.id.parkingTotalSlots);
+//            totalSlots = itemView.findViewById(R.id.parkingTotalSlots);
 
             itemView.setOnClickListener(this);
         }
