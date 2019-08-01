@@ -88,6 +88,13 @@
             android:visibility="gone"
             android:text="proceed to pay"/>
 
+        <Button
+            android:id="@+id/cancel_booking"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:text="cancel"/>
+
     </LinearLayout>
 
 </LinearLayout>

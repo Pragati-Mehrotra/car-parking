@@ -19,6 +19,7 @@
         android:id="@+id/active_booking_details"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:gravity="center">
 
         <TextView

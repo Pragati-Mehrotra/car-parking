@@ -10,11 +10,15 @@ import android.view.TextureView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alokbharti.parkme.Interfaces.CommonAPIInterface;
 import com.alokbharti.parkme.Utilities.APIHelper;
+import com.androidnetworking.error.ANError;
+import com.androidnetworking.interfaces.JSONObjectRequestListener;
+import com.rx2androidnetworking.Rx2AndroidNetworking;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,7 +26,9 @@ import org.json.JSONObject;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
+import static com.alokbharti.parkme.Utilities.GlobalConstants.cancelBookingUrl;
 import static com.alokbharti.parkme.Utilities.GlobalConstants.currentUserId;
 
 public class BookingActivity extends AppCompatActivity implements CommonAPIInterface {
@@ -31,6 +37,7 @@ public class BookingActivity extends AppCompatActivity implements CommonAPIInter
     Button bookingButton;
     private APIHelper apiHelper;
     private String parkingAddress;
+    private LinearLayout bookingLinearLayout;
 
     private TextView bookingId;
     private TextView parkingAddressTv;
@@ -42,12 +49,14 @@ public class BookingActivity extends AppCompatActivity implements CommonAPIInter
     private TextView outOtp;
     private TextView boookingStatus;
     private Button payBillButton;
+    private Button cancelBookingButton;
+    private int newBookingId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_booking);
-
+        setTitle("Book Parking Slots");
         initViews();
 
         apiHelper = new APIHelper(this);
@@ -69,6 +78,7 @@ public class BookingActivity extends AppCompatActivity implements CommonAPIInter
     }
 
     private void initViews() {
+        bookingLinearLayout = findViewById(R.id.booking_ll);
         bookingSlotDuration = findViewById(R.id.booking_slot_duration);
         bookingButton = findViewById(R.id.booking_button);
         bookingId = findViewById(R.id.booking_id);
@@ -89,29 +99,38 @@ public class BookingActivity extends AppCompatActivity implements CommonAPIInter
                 startActivity(intent);
             }
         });
+
+        cancelBookingButton = findViewById(R.id.cancel_booking);
+        cancelBookingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cancelBookingApiCall(newBookingId);
+            }
+        });
     }
 
     @Override
     public void onSuccessfulHit(JSONObject response) {
         Log.e("response: ",response.toString());
-        parkingAddressTv.setText("Parking Address: "+parkingAddress);
+        bookingLinearLayout.setVisibility(View.GONE);
+        cancelBookingButton.setVisibility(View.VISIBLE);
+        payBillButton.setVisibility(View.VISIBLE);
+        parkingAddressTv.setText(String.format("Parking Address: %s", parkingAddress));
         try {
-            bookingId.setText("Booking Id: "+response.getInt("bookingId"));
-            bill.setText("Bill: "+response.getDouble("bill"));
-            slotDuration.setText("SlotDuration: "+response.getInt("slotDuration"));
-            inOtp.setText("In OTP: "+response.getInt("inOtp"));
-            outOtp.setText("Out OTP: "+response.getInt("outOtp"));
-            boookingStatus.setText("Status: "+response.getString("status"));
+            newBookingId = response.getInt("bookingId");
+            bookingId.setText(String.format(Locale.ENGLISH,"Booking Id: %d", newBookingId));
+            bill.setText(String.format("Bill: %s", response.getDouble("bill")));
+            slotDuration.setText(String.format(Locale.ENGLISH,"SlotDuration: %d", response.getInt("slotDuration")));
+            inOtp.setText(String.format(Locale.ENGLISH,"In OTP: %d", response.getInt("inOtp")));
+            boookingStatus.setText(String.format("Status: %s", response.getString("status")));
 
-            DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+            DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
             long inTimeStamp = response.getLong("inTime");
-            long outTimeStamp = response.getLong("outTime");
+            Log.e("inTimeStamp", ": "+inTimeStamp);
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(inTimeStamp);
+            Log.e("TImeStamp: ",formatter.format(calendar.getTime()));
             inTime.setText("In timeStamp: "+formatter.format(calendar.getTime()));
-            calendar.setTimeInMillis(outTimeStamp);
-            outTime.setText("Out TimeStamp: "+formatter.format(calendar.getTime()));
-            payBillButton.setVisibility(View.VISIBLE);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -121,5 +140,30 @@ public class BookingActivity extends AppCompatActivity implements CommonAPIInter
     @Override
     public void onFailureAPIHit() {
         Toast.makeText(this, "Failed to get data!!!", Toast.LENGTH_SHORT).show();
+    }
+
+    public void cancelBookingApiCall(int bookingId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("bookingId", bookingId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        Rx2AndroidNetworking.post(cancelBookingUrl)
+                .addJSONObjectBody(jsonObject)
+                .build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Toast.makeText(BookingActivity.this, "Booking cancelled", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+
+                    }
+                });
     }
 }

@@ -9,11 +9,13 @@
 
     <string name="menu_home">Home</string>
     <string name="menu_history">History</string>
-    <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_active_booking">My Active Booking</string>
     <string name="menu_tools">Tools</string>
     <string name="menu_share">Share</string>
     <string name="menu_send">Send</string>
     <string name="menu_profile">My Profile</string>
     <string name="no_active_booking_textview">There is no active booking for you</string>
     <string name="checkout">checkout</string>
+    <string name="otp_alert">Enter this OTP to proceed</string>
+    <string name="cancel">CANCEL</string>
 </resources>

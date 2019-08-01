@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity
 //        parkingRecyclerView = findViewById(R.id.parkingRecyclerView);
 //        parkingRecyclerView.setHasFixedSize(true);
 //        parkingRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        locationButton = findViewById(R.id.locateButton);
+        //locationButton = findViewById(R.id.locateButton);
         searchAddressButton = findViewById(R.id.search_address_button);
         searchAddressEditText = findViewById(R.id.location_search_edit_text);
         searchAddressEditText.setOnKeyListener(new View.OnKeyListener() {
@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             }
         });
-        locationButton.setOnClickListener(new View.OnClickListener() {
+        /*locationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity
                     getparkinglistFromGPS();
                 }
             }
-        });
+        });*/
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         final SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -270,8 +270,8 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(this,ProfileActivity.class));
         } else if (id == R.id.nav_history) {
             startActivity(new Intent(this, HistoryActivity.class));
-        } else if (id == R.id.nav_slideshow) {
-
+        } else if (id == R.id.nav_active_booking) {
+            startActivity(new Intent(this, ActiveBooking.class));
         } else if (id == R.id.nav_tools) {
 
         } else if (id == R.id.nav_share) {

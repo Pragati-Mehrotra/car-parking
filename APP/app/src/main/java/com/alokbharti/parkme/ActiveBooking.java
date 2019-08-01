@@ -1,10 +1,13 @@
 package com.alokbharti.parkme;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -23,6 +26,7 @@ import org.json.JSONObject;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 import static com.alokbharti.parkme.Utilities.GlobalConstants.checkoutBookingUrl;
 import static com.alokbharti.parkme.Utilities.GlobalConstants.currentUserId;
@@ -44,6 +48,7 @@ public class ActiveBooking extends AppCompatActivity implements CommonAPIInterfa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_active_booking);
+        setTitle("My Active Booking");
 
         initViews();
         apiHelper = new APIHelper(this);
@@ -77,11 +82,12 @@ public class ActiveBooking extends AppCompatActivity implements CommonAPIInterfa
                 bill.setText(String.format("Total Bill: %s", String.valueOf(response.getDouble("bill"))));
                 bookingSlotDuration.setText(String.format("Booking slot duration: %s", String.valueOf(response.getInt("slotDuration"))));
 
-                DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
                 long inTimeStamp = response.getLong("inTime");
+                Log.e("inTimeStamp in AB: ", " "+inTimeStamp);
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTimeInMillis(inTimeStamp);
-                bookingTimeStamp.setText(String.format("Booking time: %s", formatter.format(calendar)));
+                bookingTimeStamp.setText(String.format("Booking time: %s", formatter.format(calendar.getTime())));
                 bookingStatus.setText(String.format("Booking status: %s", response.getString("status")));
                 checkout.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -106,7 +112,7 @@ public class ActiveBooking extends AppCompatActivity implements CommonAPIInterfa
 
         final JSONObject jsonObject = new JSONObject();
         try{
-            jsonObject.put("userId", bookingId);
+            jsonObject.put("bookingId", bookingId);
         }catch(JSONException e){
             e.printStackTrace();
         }
@@ -120,10 +126,30 @@ public class ActiveBooking extends AppCompatActivity implements CommonAPIInterfa
                     public void onResponse(JSONObject response) {
                         progressDialog.dismiss();
                         try {
-                            new AlertDialog.Builder(ActiveBooking.this)
-                                    .setMessage("Please enter this otp to checkout: "+response.getInt("outOtp"))
-                                    //TODO: set a button which allow users to proceed
+                            View view = LayoutInflater.from(ActiveBooking.this).inflate(R.layout.otp_dialog_alert, null);
+                            final AlertDialog alertDialog = new AlertDialog.Builder(ActiveBooking.this)
+                                    .setView(view)
                                     .show();
+
+                            TextView checkoutOtpTV = view.findViewById(R.id.checkout_otp);
+                            checkoutOtpTV.setText(String.valueOf(response.getInt("outOtp")));
+                            AppCompatButton cancelButton = view.findViewById(R.id.checkout_cancel_button);
+                            cancelButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+
+                            AppCompatButton checkoutProceedButton = view.findViewById(R.id.checkout_proceed_button);
+                            checkoutProceedButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    Toast.makeText(ActiveBooking.this, "Your Booking status will be updated. Thanks for booking with us :)", Toast.LENGTH_SHORT).show();
+                                    alertDialog.dismiss();
+                                    finish();
+                                }
+                            });
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -131,7 +157,8 @@ public class ActiveBooking extends AppCompatActivity implements CommonAPIInterfa
 
                     @Override
                     public void onError(ANError anError) {
-
+                        progressDialog.dismiss();
+                        Toast.makeText(ActiveBooking.this, "Can't able to get OTP!!!", Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -145,11 +172,10 @@ public class ActiveBooking extends AppCompatActivity implements CommonAPIInterfa
     public void getParkingDetails(int parkingId){
         final JSONObject jsonObject = new JSONObject();
         try{
-            jsonObject.put("userId", parkingId);
+            jsonObject.put("parkingId", parkingId);
         }catch(JSONException e){
             e.printStackTrace();
         }
-
         Rx2AndroidNetworking.post(parkingDetailsUrl)
                 .addJSONObjectBody(jsonObject)
                 .build()

@@ -188,7 +188,8 @@ public class APIHelper {
 
                     @Override
                     public void onError(ANError anError) {
-                                commonAPIInterface.onFailureAPIHit();
+                        Log.e("new booking", anError.getMessage());
+                        commonAPIInterface.onFailureAPIHit();
                     }
                 });
     }
