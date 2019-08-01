@@ -269,7 +269,6 @@ public class MainActivity extends AppCompatActivity
             // Handle the camera action
             startActivity(new Intent(this,ProfileActivity.class));
         } else if (id == R.id.nav_history) {
-
             startActivity(new Intent(this, HistoryActivity.class));
         } else if (id == R.id.nav_slideshow) {
 

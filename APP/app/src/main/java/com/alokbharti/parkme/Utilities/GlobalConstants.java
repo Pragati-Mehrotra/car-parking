@@ -15,6 +15,10 @@ public class GlobalConstants {
     public static String driveInParkingUrl = BASE_URL+"parking/driveIn";
     public static String driveOutParkingUrl = BASE_URL+"parking/driveOut";
     public static String registerParkingUrl = BASE_URL+"parking/register";
+<<<<<<< Updated upstream
 
     public static int radius = 5000;
+=======
+    public static String parkingDetailsUrl = BASE_URL+"parking/details";
+>>>>>>> Stashed changes
 }

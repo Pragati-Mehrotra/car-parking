@@ -276,4 +276,33 @@ public class APIHelper {
                     }
                 });
     }
+
+    public void getActiveBookingDetails(int userId){
+        final JSONObject jsonObject = new JSONObject();
+        try{
+            jsonObject.put("userId", userId);
+        }catch(JSONException e){
+            e.printStackTrace();
+        }
+
+        Rx2AndroidNetworking.post(activeBookingUrl)
+                .addJSONObjectBody(jsonObject)
+                .build()
+                .getAsJSONArray(new JSONArrayRequestListener() {
+
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            commonAPIInterface.onSuccessfulHit(response.getJSONObject(0));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        commonAPIInterface.onFailureAPIHit();
+                    }
+                });
+    }
 }

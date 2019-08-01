@@ -35,7 +35,6 @@ public class BookingActivity extends AppCompatActivity implements CommonAPIInter
     private TextView bookingId;
     private TextView parkingAddressTv;
     private TextView bill;
-    private TextView timestamp;
     private TextView slotDuration;
     private TextView inTime;
     private TextView outTime;
@@ -75,7 +74,6 @@ public class BookingActivity extends AppCompatActivity implements CommonAPIInter
         bookingId = findViewById(R.id.booking_id);
         parkingAddressTv = findViewById(R.id.parking_address);
         bill = findViewById(R.id.bill);
-        timestamp = findViewById(R.id.timestamp);
         slotDuration = findViewById(R.id.slot_duration);
         inTime = findViewById(R.id.in_time);
         outTime = findViewById(R.id.out_time);
