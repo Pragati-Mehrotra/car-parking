@@ -2,8 +2,12 @@ package com.alokbharti.parkme;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.TextureView;
@@ -87,9 +91,29 @@ public class BookingActivity extends AppCompatActivity implements CommonAPIInter
             @Override
             public void onClick(View view) {
                 if(googlePayRB.isChecked()){
-                    Intent intent = new Intent(BookingActivity.this, ActiveBooking.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
+
+                    final ProgressDialog progressDialog = new ProgressDialog(BookingActivity.this);
+                    progressDialog.setMessage("Confirming your payment......");
+                    progressDialog.show();
+
+                    //false payment procedure, wait for 2 seconds
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressDialog.dismiss();
+                            new AlertDialog.Builder(BookingActivity.this)
+                                    .setTitle("Payment Confirmed")
+                                    .setMessage("Your payment is confirmed. Thanks for booking with us. Have a nice day :)")
+                                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            startActivity(new Intent(BookingActivity.this, ActiveBooking.class));
+                                            finish();
+                                        }
+                                    })
+                                    .show();
+                        }
+                    }, 2000);
                 }else {
                     Toast.makeText(BookingActivity.this, "Please select at least one payment method", Toast.LENGTH_SHORT).show();
                 }
