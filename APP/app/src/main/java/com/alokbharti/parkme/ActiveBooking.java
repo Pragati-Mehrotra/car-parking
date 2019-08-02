@@ -5,6 +5,7 @@ import androidx.appcompat.widget.AppCompatButton;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -74,7 +75,16 @@ public class ActiveBooking extends AppCompatActivity implements CommonAPIInterfa
         cancelActiveBooking.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                cancelBookingApiCall(bookingId);
+                new AlertDialog.Builder(ActiveBooking.this)
+                        .setTitle("CANCEL BOOKING")
+                        .setMessage("Are you sure wanna cancel this booking??")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                cancelBookingApiCall(bookingId);
+                            }
+                        })
+                        .setNegativeButton("CANCEL", null);
             }
         });
     }
