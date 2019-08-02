@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,19 +39,21 @@ public class BookingActivity extends AppCompatActivity implements CommonAPIInter
     private APIHelper apiHelper;
     private String parkingAddress;
     private LinearLayout bookingLinearLayout;
+    private LinearLayout bookingDetailsLinearLayout;
+    private EditText couponCode;
+    private Button couponCodeSubmitButton;
+    private RadioButton googlePayRB;
 
     private TextView bookingId;
     private TextView parkingAddressTv;
     private TextView bill;
     private TextView slotDuration;
     private TextView inTime;
-    private TextView outTime;
-    private TextView inOtp;
-    private TextView outOtp;
-    private TextView boookingStatus;
     private Button payBillButton;
     private Button cancelBookingButton;
     private int newBookingId;
+    private int parkingId;
+    String slotDurationValue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,24 +64,17 @@ public class BookingActivity extends AppCompatActivity implements CommonAPIInter
 
         apiHelper = new APIHelper(this);
 
-        final int parkingId = getIntent().getIntExtra("parking_id", 0);
+        parkingId = getIntent().getIntExtra("parking_id", 0);
         parkingAddress = getIntent().getStringExtra("parking_address");
-
-        bookingButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String slotDuration = bookingSlotDuration.getText().toString();
-                if(TextUtils.isEmpty(slotDuration)){
-                    bookingSlotDuration.setError("This is required");
-                    return;
-                }
-                apiHelper.getBookingDetails(currentUserId, parkingId, Integer.parseInt(slotDuration), 0);
-            }
-        });
     }
 
     private void initViews() {
+        couponCode = findViewById(R.id.coupon_code_et);
+        couponCodeSubmitButton = findViewById(R.id.coupon_code_button);
+        googlePayRB = findViewById(R.id.google_pay_radiobutton);
         bookingLinearLayout = findViewById(R.id.booking_ll);
+        bookingDetailsLinearLayout = findViewById(R.id.booking_detail_ll);
+        bookingDetailsLinearLayout.setVisibility(View.GONE);
         bookingSlotDuration = findViewById(R.id.booking_slot_duration);
         bookingButton = findViewById(R.id.booking_button);
         bookingId = findViewById(R.id.booking_id);
@@ -86,17 +82,17 @@ public class BookingActivity extends AppCompatActivity implements CommonAPIInter
         bill = findViewById(R.id.bill);
         slotDuration = findViewById(R.id.slot_duration);
         inTime = findViewById(R.id.in_time);
-        outTime = findViewById(R.id.out_time);
-        inOtp = findViewById(R.id.in_otp);
-        outOtp = findViewById(R.id.out_otp);
-        boookingStatus = findViewById(R.id.booking_status);
         payBillButton = findViewById(R.id.pay_bill_button);
         payBillButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(BookingActivity.this, PaymentActivity.class);
-                intent.putExtra("amount",bill.getText().toString());
-                startActivity(intent);
+                if(googlePayRB.isChecked()){
+                    Intent intent = new Intent(BookingActivity.this, ActiveBooking.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }else {
+                    Toast.makeText(BookingActivity.this, "Please select at least one payment method", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -104,7 +100,40 @@ public class BookingActivity extends AppCompatActivity implements CommonAPIInter
         cancelBookingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                cancelBookingApiCall(newBookingId);
+                bookingLinearLayout.setVisibility(View.VISIBLE);
+                bookingDetailsLinearLayout.setVisibility(View.GONE);
+            }
+        });
+
+        bookingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                slotDurationValue = bookingSlotDuration.getText().toString();
+                if(TextUtils.isEmpty(slotDurationValue)){
+                    bookingSlotDuration.setError("This is required");
+                    return;
+                }
+                bookingLinearLayout.setVisibility(View.GONE);
+                bookingDetailsLinearLayout.setVisibility(View.VISIBLE);
+                long timeStamp = System.currentTimeMillis();
+                apiHelper.getBookingDetails(currentUserId, parkingId, Integer.parseInt(slotDurationValue), timeStamp);
+            }
+        });
+
+        couponCodeSubmitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String coupon = couponCode.getText().toString();
+                if(TextUtils.isEmpty(coupon)){
+                    couponCode.setError("fill correct coupon code");
+                    return;
+                }
+
+                if(coupon.equals("ParkMe20")){
+                    double billToBePaid = Double.parseDouble(bill.getText().toString());
+                    billToBePaid = billToBePaid - billToBePaid*(0.2);
+                    bill.setText(String.format("Amount to be paid: %s", String.valueOf(billToBePaid)));
+                }
             }
         });
     }
@@ -112,17 +141,12 @@ public class BookingActivity extends AppCompatActivity implements CommonAPIInter
     @Override
     public void onSuccessfulHit(JSONObject response) {
         Log.e("response: ",response.toString());
-        bookingLinearLayout.setVisibility(View.GONE);
-        cancelBookingButton.setVisibility(View.VISIBLE);
-        payBillButton.setVisibility(View.VISIBLE);
         parkingAddressTv.setText(String.format("Parking Address: %s", parkingAddress));
         try {
             newBookingId = response.getInt("bookingId");
             bookingId.setText(String.format(Locale.ENGLISH,"Booking Id: %d", newBookingId));
-            bill.setText(String.format("Bill: %s", response.getDouble("bill")));
+            bill.setText(String.format("Amount to be paid: %s", response.getDouble("bill")));
             slotDuration.setText(String.format(Locale.ENGLISH,"SlotDuration: %d", response.getInt("slotDuration")));
-            inOtp.setText(String.format(Locale.ENGLISH,"In OTP: %d", response.getInt("inOtp")));
-            boookingStatus.setText(String.format("Status: %s", response.getString("status")));
 
             DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
             long inTimeStamp = response.getLong("inTime");
@@ -140,30 +164,5 @@ public class BookingActivity extends AppCompatActivity implements CommonAPIInter
     @Override
     public void onFailureAPIHit() {
         Toast.makeText(this, "Failed to get data!!!", Toast.LENGTH_SHORT).show();
-    }
-
-    public void cancelBookingApiCall(int bookingId){
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("bookingId", bookingId);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        Rx2AndroidNetworking.post(cancelBookingUrl)
-                .addJSONObjectBody(jsonObject)
-                .build()
-                .getAsJSONObject(new JSONObjectRequestListener() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Toast.makeText(BookingActivity.this, "Booking cancelled", Toast.LENGTH_SHORT).show();
-                        finish();
-                    }
-
-                    @Override
-                    public void onError(ANError anError) {
-
-                    }
-                });
     }
 }

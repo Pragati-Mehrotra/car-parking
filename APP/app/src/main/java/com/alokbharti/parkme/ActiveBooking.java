@@ -5,6 +5,7 @@ import androidx.appcompat.widget.AppCompatButton;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,6 +29,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
+import static com.alokbharti.parkme.Utilities.GlobalConstants.cancelBookingUrl;
 import static com.alokbharti.parkme.Utilities.GlobalConstants.checkoutBookingUrl;
 import static com.alokbharti.parkme.Utilities.GlobalConstants.currentUserId;
 import static com.alokbharti.parkme.Utilities.GlobalConstants.parkingDetailsUrl;
@@ -39,11 +41,14 @@ public class ActiveBooking extends AppCompatActivity implements CommonAPIInterfa
     private TextView bill;
     private TextView bookingTimeStamp;
     private TextView bookingSlotDuration;
+    private TextView activeBookingId;
     private TextView bookingStatus;
     private Button checkout;
     private APIHelper apiHelper;
     private LinearLayout activeBookingsDetails;
+    private Button cancelActiveBooking;
 
+    private int bookingId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +61,7 @@ public class ActiveBooking extends AppCompatActivity implements CommonAPIInterfa
     }
 
     private void initViews() {
+        activeBookingId = findViewById(R.id.active_booking_id);
         noActiveBookingTV = findViewById(R.id.no_active_booking_tv);
         parkingAddress = findViewById(R.id.active_booking_parking_address);
         bill = findViewById(R.id.active_booking_bill);
@@ -64,6 +70,13 @@ public class ActiveBooking extends AppCompatActivity implements CommonAPIInterfa
         bookingStatus = findViewById(R.id.active_booking_status);
         checkout = findViewById(R.id.checkout);
         activeBookingsDetails = findViewById(R.id.active_booking_details);
+        cancelActiveBooking = findViewById(R.id.cancel_active_booking);
+        cancelActiveBooking.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cancelBookingApiCall(bookingId);
+            }
+        });
     }
 
     @Override
@@ -77,6 +90,8 @@ public class ActiveBooking extends AppCompatActivity implements CommonAPIInterfa
             activeBookingsDetails.setVisibility(View.VISIBLE);
 
             try {
+                bookingId = response.getInt("bookingId");
+                activeBookingId.setText(String.format(Locale.ENGLISH,"Booking ID: %d", bookingId));
                 int parkingId = response.getInt("parkingId");
                 getParkingDetails(parkingId);
                 bill.setText(String.format("Total Bill: %s", String.valueOf(response.getDouble("bill"))));
@@ -147,6 +162,10 @@ public class ActiveBooking extends AppCompatActivity implements CommonAPIInterfa
                                 public void onClick(View view) {
                                     Toast.makeText(ActiveBooking.this, "Your Booking status will be updated. Thanks for booking with us :)", Toast.LENGTH_SHORT).show();
                                     alertDialog.dismiss();
+
+                                    Intent intent = new Intent(ActiveBooking.this, MainActivity.class);
+                                    //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(intent);
                                     finish();
                                 }
                             });
@@ -176,18 +195,45 @@ public class ActiveBooking extends AppCompatActivity implements CommonAPIInterfa
         }catch(JSONException e){
             e.printStackTrace();
         }
+        Log.e("parking Id: ", ""+ parkingId);
         Rx2AndroidNetworking.post(parkingDetailsUrl)
                 .addJSONObjectBody(jsonObject)
                 .build()
                 .getAsJSONObject(new JSONObjectRequestListener() {
-
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-                            parkingAddress.setText(String.format("Parking address: %s", response.getString("parkingAddress")));
+                            Log.e("parking address", response.getString("address"));
+                            parkingAddress.setText(String.format("Parking address: %s", response.getString("address")));
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+                    }
+                    @Override
+                    public void onError(ANError anError) {
+
+                    }
+                });
+    }
+
+    public void cancelBookingApiCall(int bookingId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("bookingId", bookingId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        Rx2AndroidNetworking.post(cancelBookingUrl)
+                .addJSONObjectBody(jsonObject)
+                .build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Toast.makeText(ActiveBooking.this, "Booking cancelled", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(ActiveBooking.this, MainActivity.class);
+                        startActivity(intent);
+                        finish();
                     }
 
                     @Override
@@ -195,5 +241,12 @@ public class ActiveBooking extends AppCompatActivity implements CommonAPIInterfa
 
                     }
                 });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivity(new Intent(this, MainActivity.class));
+        finish();
     }
 }
