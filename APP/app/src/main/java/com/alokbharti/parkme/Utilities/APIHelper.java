@@ -5,6 +5,7 @@ import android.util.Log;
 import com.alokbharti.parkme.Interfaces.AuthInterface;
 import com.alokbharti.parkme.Interfaces.CommonAPIInterface;
 import com.alokbharti.parkme.Interfaces.HistoryInterface;
+import com.alokbharti.parkme.Interfaces.JSONArrayAPIInterface;
 import com.alokbharti.parkme.Interfaces.LocationInterface;
 import com.alokbharti.parkme.Interfaces.ProfileInterface;
 import com.alokbharti.parkme.Pojo.History;
@@ -31,6 +32,11 @@ public class APIHelper {
     private CommonAPIInterface commonAPIInterface;
     private ProfileInterface profileInterface;
     private HistoryInterface historyInterface;
+    private JSONArrayAPIInterface jsonArrayAPIInterface;
+
+    public APIHelper(JSONArrayAPIInterface jsonArrayAPIInterface) {
+        this.jsonArrayAPIInterface = jsonArrayAPIInterface;
+    }
 
     public APIHelper(AuthInterface authInterface) {
         this.authInterface = authInterface;
@@ -165,17 +171,17 @@ public class APIHelper {
                 });
     }
 
-    public void getBookingDetails(int userId, int parkingId, int slotDuration, long timeStamp){
+    public void getNewBookingDetails(int userId, int parkingId, int slotDuration){
         JSONObject jsonObject = new JSONObject();
 
         try {
             jsonObject.put("userId", userId);
             jsonObject.put("parkingId", parkingId);
             jsonObject.put("slotDuration", slotDuration);
-            jsonObject.put("inTime", timeStamp);
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        Log.e("sending", jsonObject.toString());
 
         Rx2AndroidNetworking.post(newBookingUrl)
         .addJSONObjectBody(jsonObject)
@@ -188,7 +194,7 @@ public class APIHelper {
 
                     @Override
                     public void onError(ANError anError) {
-                        Log.e("new booking", anError.getMessage());
+                        //Log.e("new booking", anError.getMessage());
                         commonAPIInterface.onFailureAPIHit();
                     }
                 });
@@ -285,6 +291,7 @@ public class APIHelper {
         }catch(JSONException e){
             e.printStackTrace();
         }
+        Log.e("userId", jsonObject.toString());
 
         Rx2AndroidNetworking.post(activeBookingUrl)
                 .addJSONObjectBody(jsonObject)
@@ -294,7 +301,12 @@ public class APIHelper {
                     @Override
                     public void onResponse(JSONArray response) {
                         try {
-                            commonAPIInterface.onSuccessfulHit(response.getJSONObject(0));
+                            Log.e("in active bd", response.toString());
+                            if(response.length()==0){
+                                commonAPIInterface.onSuccessfulHit(null);
+                            }else {
+                                commonAPIInterface.onSuccessfulHit(response.getJSONObject(0));
+                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -303,6 +315,31 @@ public class APIHelper {
                     @Override
                     public void onError(ANError anError) {
                         commonAPIInterface.onFailureAPIHit();
+                    }
+                });
+    }
+
+    public void getBillDetails(int slotDuration){
+        final JSONObject jsonObject = new JSONObject();
+        try{
+            jsonObject.put("slotDuration", slotDuration);
+        }catch(JSONException e){
+            e.printStackTrace();
+        }
+        Log.e("userId", jsonObject.toString());
+
+        Rx2AndroidNetworking.post(bookingBillUrl)
+                .addJSONObjectBody(jsonObject)
+                .build()
+                .getAsJSONArray(new JSONArrayRequestListener() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        jsonArrayAPIInterface.onSuccessfulHit(response);
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        jsonArrayAPIInterface.onFailureAPIHit();
                     }
                 });
     }

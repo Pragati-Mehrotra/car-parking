@@ -2,184 +2,140 @@ package com.alokbharti.parkme;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.text.TextUtils;
-import android.util.Log;
-import android.view.TextureView;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.alokbharti.parkme.Interfaces.CommonAPIInterface;
+import com.alokbharti.parkme.Interfaces.JSONArrayAPIInterface;
 import com.alokbharti.parkme.Utilities.APIHelper;
-import com.androidnetworking.error.ANError;
-import com.androidnetworking.interfaces.JSONObjectRequestListener;
-import com.rx2androidnetworking.Rx2AndroidNetworking;
-
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Locale;
+public class BookingActivity extends AppCompatActivity implements JSONArrayAPIInterface {
 
-import static com.alokbharti.parkme.Utilities.GlobalConstants.cancelBookingUrl;
-import static com.alokbharti.parkme.Utilities.GlobalConstants.currentUserId;
-
-public class BookingActivity extends AppCompatActivity implements CommonAPIInterface {
-
-    EditText bookingSlotDuration;
-    Button bookingButton;
     private APIHelper apiHelper;
-    private String parkingAddress;
-    private LinearLayout bookingLinearLayout;
-    private LinearLayout bookingDetailsLinearLayout;
-    private EditText couponCode;
-    private Button couponCodeSubmitButton;
-    private RadioButton googlePayRB;
+    private String parkingName,parkingAddress;
 
-    private TextView bookingId;
+    private TextView parkingNameTv;
     private TextView parkingAddressTv;
-    private TextView bill;
-    private TextView slotDuration;
-    private TextView inTime;
+    private TextView slotsAvailableTv;
+    private TextView slotBillMessage;
+    private TextView slotBillValue;
+    private TextView overTimeBillMessage;
+    private TextView overTimeBillValue;
+    private TextView convenienceBillMessage;
+    private TextView convenienceBillValue;
+    private TextView gstBillMessage;
+    private TextView gstBillValue;
+    private TextView totalBillMessage;
+    private TextView totalBillValue;
+
+    private RadioButton radioButton2, radioButton4, radioButton8;
+
     private Button payBillButton;
     private Button cancelBookingButton;
-    private int newBookingId;
-    private int parkingId;
-    String slotDurationValue;
+
+    private int slotDuration = 2, parkingId, slotsAvailable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_booking);
         setTitle("Book Parking Slots");
+
+        //back button
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        parkingId = getIntent().getIntExtra("parking_id",0);
+        parkingName = getIntent().getStringExtra("parking_name");
+        parkingAddress = getIntent().getStringExtra("parking_address");
+        slotsAvailable = getIntent().getIntExtra("slots_available",0);
+
         initViews();
 
         apiHelper = new APIHelper(this);
 
-        parkingId = getIntent().getIntExtra("parking_id", 0);
-        parkingAddress = getIntent().getStringExtra("parking_address");
+        apiHelper.getBillDetails(slotDuration);
     }
 
     private void initViews() {
-        couponCode = findViewById(R.id.coupon_code_et);
-        couponCodeSubmitButton = findViewById(R.id.coupon_code_button);
-        googlePayRB = findViewById(R.id.google_pay_radiobutton);
-        bookingLinearLayout = findViewById(R.id.booking_ll);
-        bookingDetailsLinearLayout = findViewById(R.id.booking_detail_ll);
-        bookingDetailsLinearLayout.setVisibility(View.GONE);
-        bookingSlotDuration = findViewById(R.id.booking_slot_duration);
-        bookingButton = findViewById(R.id.booking_button);
-        bookingId = findViewById(R.id.booking_id);
+        parkingNameTv = findViewById(R.id.parking_name);
+        parkingNameTv.setText(parkingName);
         parkingAddressTv = findViewById(R.id.parking_address);
-        bill = findViewById(R.id.bill);
-        slotDuration = findViewById(R.id.slot_duration);
-        inTime = findViewById(R.id.in_time);
-        payBillButton = findViewById(R.id.pay_bill_button);
-        payBillButton.setOnClickListener(new View.OnClickListener() {
+        parkingAddressTv.setText(parkingAddress);
+        slotsAvailableTv = findViewById(R.id.slots_available);
+        slotsAvailableTv.setText(String.valueOf(slotsAvailable));
+
+        radioButton2 = findViewById(R.id.radio_button2);
+        radioButton2.setChecked(true);
+        radioButton4 = findViewById(R.id.radio_button4);
+        radioButton8 = findViewById(R.id.radio_button8);
+
+        radioButton2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(googlePayRB.isChecked()){
-
-                    final ProgressDialog progressDialog = new ProgressDialog(BookingActivity.this);
-                    progressDialog.setMessage("Confirming your payment......");
-                    progressDialog.show();
-
-                    //false payment procedure, wait for 2 seconds
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            progressDialog.dismiss();
-                            new AlertDialog.Builder(BookingActivity.this)
-                                    .setTitle("Payment Confirmed")
-                                    .setMessage("Your payment is confirmed. Thanks for booking with us. Have a nice day :)")
-                                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            startActivity(new Intent(BookingActivity.this, ActiveBooking.class));
-                                            finish();
-                                        }
-                                    })
-                                    .show();
-                        }
-                    }, 2000);
-                }else {
-                    Toast.makeText(BookingActivity.this, "Please select at least one payment method", Toast.LENGTH_SHORT).show();
-                }
+                slotDuration = 2;
+                apiHelper.getBillDetails(slotDuration);
             }
         });
 
-        cancelBookingButton = findViewById(R.id.cancel_booking);
-        cancelBookingButton.setOnClickListener(new View.OnClickListener() {
+        radioButton4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                bookingLinearLayout.setVisibility(View.VISIBLE);
-                bookingDetailsLinearLayout.setVisibility(View.GONE);
+                slotDuration = 4;
+                apiHelper.getBillDetails(slotDuration);
             }
         });
 
-        bookingButton.setOnClickListener(new View.OnClickListener() {
+        radioButton8.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                slotDurationValue = bookingSlotDuration.getText().toString();
-                if(TextUtils.isEmpty(slotDurationValue)){
-                    bookingSlotDuration.setError("This is required");
-                    return;
-                }
-                bookingLinearLayout.setVisibility(View.GONE);
-                bookingDetailsLinearLayout.setVisibility(View.VISIBLE);
-                long timeStamp = System.currentTimeMillis();
-                apiHelper.getBookingDetails(currentUserId, parkingId, Integer.parseInt(slotDurationValue), timeStamp);
+                slotDuration = 8;
+                apiHelper.getBillDetails(slotDuration);
             }
         });
 
-        couponCodeSubmitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String coupon = couponCode.getText().toString();
-                if(TextUtils.isEmpty(coupon)){
-                    couponCode.setError("fill correct coupon code");
-                    return;
-                }
-
-                if(coupon.equals("ParkMe20")){
-                    double billToBePaid = Double.parseDouble(bill.getText().toString());
-                    billToBePaid = billToBePaid - billToBePaid*(0.2);
-                    bill.setText(String.format("Amount to be paid: %s", String.valueOf(billToBePaid)));
-                }
-            }
-        });
+        slotBillMessage = findViewById(R.id.slot_bill_message);
+        slotBillValue = findViewById(R.id.slotBillValue);
+        overTimeBillMessage = findViewById(R.id.overtime_bill_message);
+        overTimeBillValue = findViewById(R.id.overtimeBillValue);
+        convenienceBillMessage = findViewById(R.id.convenience_bill_message);
+        convenienceBillValue = findViewById(R.id.convenienceBillValue);
+        gstBillMessage = findViewById(R.id.gst_bill_message);
+        gstBillValue = findViewById(R.id.gstBillValue);
+        totalBillMessage = findViewById(R.id.total_bill_message);
+        totalBillValue = findViewById(R.id.totalBillValue);
     }
 
     @Override
-    public void onSuccessfulHit(JSONObject response) {
-        Log.e("response: ",response.toString());
-        parkingAddressTv.setText(String.format("Parking Address: %s", parkingAddress));
+    public void onSuccessfulHit(JSONArray response) {
         try {
-            newBookingId = response.getInt("bookingId");
-            bookingId.setText(String.format(Locale.ENGLISH,"Booking Id: %d", newBookingId));
-            bill.setText(String.format("Amount to be paid: %s", response.getDouble("bill")));
-            slotDuration.setText(String.format(Locale.ENGLISH,"SlotDuration: %d", response.getInt("slotDuration")));
-
-            DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
-            long inTimeStamp = response.getLong("inTime");
-            Log.e("inTimeStamp", ": "+inTimeStamp);
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(inTimeStamp);
-            Log.e("TImeStamp: ",formatter.format(calendar.getTime()));
-            inTime.setText("In timeStamp: "+formatter.format(calendar.getTime()));
-
+            for(int i =0; i<response.length(); i++){
+                JSONObject jsonObject = response.getJSONObject(i);
+                switch (i){
+                    case 0: slotBillMessage.setText(jsonObject.getString("message"));
+                            slotBillValue.setText(jsonObject.getString("value"));
+                            break;
+                    case 1: overTimeBillMessage.setText(jsonObject.getString("message"));
+                            overTimeBillValue.setText(jsonObject.getString("value"));
+                            break;
+                    case 2: convenienceBillMessage.setText(jsonObject.getString("message"));
+                            convenienceBillValue.setText(jsonObject.getString("value"));
+                            break;
+                    case 3: gstBillMessage.setText(jsonObject.getString("message"));
+                            gstBillValue.setText(jsonObject.getString("value"));
+                            break;
+                    case 4: totalBillMessage.setText(jsonObject.getString("message"));
+                            totalBillValue.setText(jsonObject.getString("value"));
+                            break;
+                    default: break;        
+                }
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -187,6 +143,17 @@ public class BookingActivity extends AppCompatActivity implements CommonAPIInter
 
     @Override
     public void onFailureAPIHit() {
-        Toast.makeText(this, "Failed to get data!!!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Failed to get bill details!!", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 }

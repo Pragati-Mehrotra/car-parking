@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,7 +23,6 @@ import static com.alokbharti.parkme.Utilities.SavedSharedPreferences.setUserId;
 
 public class LandingPageActivity extends AppCompatActivity implements AuthInterface {
 
-
     private EditText userName;
     private EditText userPhoneNumber;
     private EditText userEmailId;
@@ -37,13 +37,6 @@ public class LandingPageActivity extends AppCompatActivity implements AuthInterf
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing_page);
-
-        if(getSignInStatus(LandingPageActivity.this)){
-            currentUserId = getUserId(LandingPageActivity.this);
-            Intent intent = new Intent(LandingPageActivity.this, MainActivity.class);
-            startActivity(intent);
-        }
-
         initViews();
 
         apiHelper = new APIHelper(this);
