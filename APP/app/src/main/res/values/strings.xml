@@ -14,7 +14,7 @@
     <string name="menu_share">Share</string>
     <string name="menu_send">Send</string>
     <string name="menu_profile">My Profile</string>
-    <string name="no_active_booking_textview">There is no active booking for you</string>
+    <string name="no_active_booking_textview">You don\'t have any active bookings</string>
     <string name="checkout">checkout</string>
     <string name="otp_alert">Enter this OTP to proceed</string>
     <string name="cancel">CANCEL</string>

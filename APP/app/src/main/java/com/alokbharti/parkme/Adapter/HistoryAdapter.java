@@ -46,7 +46,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
         else if(status.equals("Closed"))
             holder.status.setTextColor(Color.parseColor("#2e7d32"));
         holder.status.setText(status);
-        holder.bill.setText(String.valueOf(history.getBill()));
+        holder.bill.setText("₹ " + String.valueOf(history.getBill()));
         Date date = new Date(history.getInTime());
         Format format = new SimpleDateFormat("MMM dd, yyyy HH:mm");
         holder.time.setText(String.valueOf(format.format(date)));

@@ -6,6 +6,7 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -56,7 +57,7 @@ public class ActiveBooking extends AppCompatActivity implements NavigationView.O
     private TextView outOtp;
     private Button checkout;
     private APIHelper apiHelper;
-    private LinearLayout activeBookingsDetails;
+    private ConstraintLayout activeBookingsDetails;
     private Button cancelActiveBooking;
 
     boolean isActiveBookings = false;
@@ -78,7 +79,7 @@ public class ActiveBooking extends AppCompatActivity implements NavigationView.O
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-        navigationView.setNavigationItemSelectedListener(this);
+//        navigationView.setNavigationItemSelectedListener(this);
 
         initViews();
         apiHelper = new APIHelper(this);
@@ -136,7 +137,7 @@ public class ActiveBooking extends AppCompatActivity implements NavigationView.O
                 getParkingDetails(parkingId);
                 bill.setText(String.format("Total Bill: %s", String.valueOf(response.getDouble("bill"))));
                 bookingSlotDuration.setText(String.format("Booking slot duration: %s", String.valueOf(response.getInt("slotDuration"))));
-                inOtp.setText(String.format("inOtp: %d",response.getInt("inOtp")));
+                inOtp.setText(String.valueOf(response.getInt("inOtp")));
 
                 DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
                 long inTimeStamp = response.getLong("inTime");
@@ -145,12 +146,9 @@ public class ActiveBooking extends AppCompatActivity implements NavigationView.O
                 calendar.setTimeInMillis(inTimeStamp);
                 bookingTimeStamp.setText(String.format("Booking time: %s", formatter.format(calendar.getTime())));
                 String status = response.getString("status");
-                bookingStatus.setText(String.format("Booking status: %s", status));
-                if(status.equals("Booked")){
-                    cancelActiveBooking.setEnabled(true);
-                }else{
-                    cancelActiveBooking.setEnabled(false);
-                }
+                bookingStatus.setText(status.toUpperCase());
+                if(status.equals("Parked"))checkout.setVisibility(View.VISIBLE); else checkout.setVisibility(View.GONE);
+                if(status.equals("Booked")) cancelActiveBooking.setVisibility(View.VISIBLE); else  cancelActiveBooking.setVisibility(View.GONE);
                 if(status.equals("CheckedOut")){
                     inOtp.setVisibility(View.GONE);
                     outOtp.setVisibility(View.VISIBLE);
