@@ -3,6 +3,7 @@ package com.alokbharti.parkme;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -69,7 +70,14 @@ public class BookingActivity extends AppCompatActivity implements JSONArrayAPIIn
         parkingAddressTv = findViewById(R.id.parking_address);
         parkingAddressTv.setText(parkingAddress);
         slotsAvailableTv = findViewById(R.id.slots_available);
-        slotsAvailableTv.setText(String.valueOf(slotsAvailable));
+        if(slotsAvailable > 0){
+            slotsAvailableTv.setText("SLOTS AVAILABLE");
+            slotsAvailableTv.setTextColor(Color.parseColor("#2e7d32"));
+        }
+        else{
+            slotsAvailableTv.setText("SLOTS FULL");
+            slotsAvailableTv.setTextColor(Color.RED);
+        }
 
         radioButton2 = findViewById(R.id.radio_button2);
         radioButton2.setChecked(true);
