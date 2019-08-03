@@ -18,4 +18,6 @@ public interface IBookingService {
     public Object getBookingById(Integer bookingId);
 
     public Object getActiveBookings(Integer userId);
+
+    public List<Object> calculateBill (Double slotDuration);
 }

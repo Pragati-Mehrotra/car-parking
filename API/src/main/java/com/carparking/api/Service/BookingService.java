@@ -9,6 +9,7 @@ import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -142,5 +143,59 @@ public class BookingService implements IBookingService {
     public Object getActiveBookings(Integer userId) {
         List <Booking> bookingList = bookingRepository.findByUserId(userId);
         return bookingList;
+    }
+
+    @Override
+    public List<Object> calculateBill(Double slotDuration) {
+        List<Object> bill = new ArrayList<Object>();
+        Double slotCharge;
+        String slotChargeMessage;
+        Double extraCharge = 0.0;
+        Double total;
+        String extraChargeMessage = "Extra Charge :";
+        if (slotDuration <= 2) {
+            slotChargeMessage = "Slot Charge(2 hrs): ";
+            slotCharge = (double)20;
+        }
+        else if (slotDuration > 2 && slotDuration <= 4) {
+            slotChargeMessage = "Slot Charge(4 hrs): ";
+            slotCharge = (double)40;
+        }
+        else {
+            slotChargeMessage = "Slot Charge(8 hrs): ";
+            slotCharge = (double)60;
+            if (slotDuration > 8) {
+                Integer extraTime = (int)Math.ceil(slotDuration - 8);
+                extraChargeMessage = "Extra Charge("+ extraTime + " hrs): ";
+                extraCharge = (double)(extraTime *20);
+            }
+        }
+        JSONObject object = new JSONObject();
+        object.put("message", slotChargeMessage);
+        object.put("value", slotCharge);
+        bill.add(object);
+
+        object = new JSONObject();
+        object.put("message", extraChargeMessage);
+        object.put("value", extraCharge);
+        bill.add(object);
+
+        object = new JSONObject();
+        object.put("message", "Convenience Fee: ");
+        object.put("value", "20");
+        bill.add(object);
+
+        object = new JSONObject();
+        object.put("message", "GST: ");
+        object.put("value", "0");
+        bill.add(object);
+
+        total = slotCharge + extraCharge + 20;
+        object = new JSONObject();
+        object.put("message", "Total: ");
+        object.put("value", total);
+        bill.add(object);
+
+        return bill;
     }
 }

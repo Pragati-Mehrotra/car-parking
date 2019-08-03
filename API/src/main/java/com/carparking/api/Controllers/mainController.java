@@ -182,6 +182,13 @@ public class mainController {
         Integer bookingId = reqNode.get("bookingId").asInt();
         return bookingService.cancelBooking(bookingId);
     }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/booking/bill")
+    public List<Object> calculateBill(@RequestBody String request) throws IOException{
+        JsonNode reqNode = mapper.readTree(request);
+        Double slotDuration = reqNode.get("slotDuration").asDouble();
+        return bookingService.calculateBill(slotDuration);
+    }
     //--------------------------------------------- History starts here ----------------------------------------------
 
     @RequestMapping(method = RequestMethod.GET ,value = "/parking/driveIn")
