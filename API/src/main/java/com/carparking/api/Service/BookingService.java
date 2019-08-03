@@ -152,7 +152,7 @@ public class BookingService implements IBookingService {
         String slotChargeMessage;
         Double extraCharge = 0.0;
         Double total;
-        String extraChargeMessage = "Extra Charge :";
+        String extraChargeMessage = "Overtime Charge :";
         if (slotDuration <= 2) {
             slotChargeMessage = "Slot Charge(2 hrs): ";
             slotCharge = (double)20;
@@ -166,7 +166,7 @@ public class BookingService implements IBookingService {
             slotCharge = (double)60;
             if (slotDuration > 8) {
                 Integer extraTime = (int)Math.ceil(slotDuration - 8);
-                extraChargeMessage = "Extra Charge("+ extraTime + " hrs): ";
+                extraChargeMessage = "Overtime Charge("+ extraTime + " hrs): ";
                 extraCharge = (double)(extraTime *20);
             }
         }
