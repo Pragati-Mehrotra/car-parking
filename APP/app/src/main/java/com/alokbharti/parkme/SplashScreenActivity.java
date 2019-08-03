@@ -14,6 +14,7 @@ import org.json.JSONObject;
 
 import static com.alokbharti.parkme.Utilities.GlobalConstants.currentUserId;
 import static com.alokbharti.parkme.Utilities.SavedSharedPreferences.getSignInStatus;
+import static com.alokbharti.parkme.Utilities.SavedSharedPreferences.getUserId;
 
 public class SplashScreenActivity extends AppCompatActivity implements CommonAPIInterface {
 
@@ -22,12 +23,22 @@ public class SplashScreenActivity extends AppCompatActivity implements CommonAPI
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
 
+        try {
+            Thread.sleep(1500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        currentUserId = getUserId(this);
         if(currentUserId == 0){
+            Log.e("userId", "0");
             startActivity(new Intent(this, LandingPageActivity.class));
         }
         if(getSignInStatus(this)){
+            Log.e("user", "loggedIn");
             new APIHelper(this).getActiveBookingDetails(currentUserId);
         }else{
+            Log.e("user", "not signed in");
             startActivity(new Intent(this, LandingPageActivity.class));
         }
     }

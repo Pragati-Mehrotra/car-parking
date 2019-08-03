@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="12dp">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="12dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <ScrollView
         android:layout_width="0dp"
@@ -281,21 +280,21 @@
                 app:layout_constraintTop_toBottomOf="@+id/bill3">
 
                 <RadioButton
-                    android:id="@+id/radioButton3"
+                    android:id="@+id/google_pay_radiobutton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Google Pay" />
 
                 <RadioButton
-                    android:id="@+id/radioButton2"
+                    android:id="@+id/phone_pay_radiobutton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Phone Pay" />
 
                 <RadioButton
-                    android:id="@+id/radioButton4"
+                    android:id="@+id/paytm_radiobutton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"

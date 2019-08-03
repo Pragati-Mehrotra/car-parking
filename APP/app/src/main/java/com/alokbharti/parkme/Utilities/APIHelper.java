@@ -85,7 +85,7 @@ public class APIHelper {
 
                     @Override
                     public void onError(ANError anError) {
-                        Log.e("signin error", anError.getMessage());
+                        //Log.e("signin error", anError.getMessage());
                         authInterface.onAuthFailed();
                     }
                 });

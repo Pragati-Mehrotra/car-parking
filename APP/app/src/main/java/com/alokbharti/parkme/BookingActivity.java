@@ -2,19 +2,33 @@ package com.alokbharti.parkme;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.alokbharti.parkme.Interfaces.JSONArrayAPIInterface;
 import com.alokbharti.parkme.Utilities.APIHelper;
+import com.androidnetworking.error.ANError;
+import com.androidnetworking.interfaces.JSONObjectRequestListener;
+import com.rx2androidnetworking.Rx2AndroidNetworking;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import static com.alokbharti.parkme.Utilities.GlobalConstants.currentUserId;
+import static com.alokbharti.parkme.Utilities.GlobalConstants.newBookingUrl;
 
 public class BookingActivity extends AppCompatActivity implements JSONArrayAPIInterface {
 
@@ -36,9 +50,9 @@ public class BookingActivity extends AppCompatActivity implements JSONArrayAPIIn
     private TextView totalBillValue;
 
     private RadioButton radioButton2, radioButton4, radioButton8;
+    private RadioButton googlePayRadioButton, phonePayRadioButton, paytmRadioButton;
 
     private Button payBillButton;
-    private Button cancelBookingButton;
 
     private int slotDuration = 2, parkingId, slotsAvailable;
 
@@ -75,6 +89,7 @@ public class BookingActivity extends AppCompatActivity implements JSONArrayAPIIn
             slotsAvailableTv.setTextColor(Color.parseColor("#2e7d32"));
         }
         else{
+
             slotsAvailableTv.setText("SLOTS FULL");
             slotsAvailableTv.setTextColor(Color.RED);
         }
@@ -118,6 +133,64 @@ public class BookingActivity extends AppCompatActivity implements JSONArrayAPIIn
         gstBillValue = findViewById(R.id.gstBillValue);
         totalBillMessage = findViewById(R.id.total_bill_message);
         totalBillValue = findViewById(R.id.totalBillValue);
+        googlePayRadioButton = findViewById(R.id.google_pay_radiobutton);
+        phonePayRadioButton = findViewById(R.id.phone_pay_radiobutton);
+        paytmRadioButton = findViewById(R.id.paytm_radiobutton);
+
+        payBillButton = findViewById(R.id.payButton);
+
+        payBillButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!googlePayRadioButton.isChecked() && !phonePayRadioButton.isChecked() && !paytmRadioButton.isChecked()){
+                    Toast.makeText(BookingActivity.this, "Select atleast one payment method to proceed with current bookings!!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                JSONObject jsonObject = new JSONObject();
+
+                try {
+                    jsonObject.put("userId", currentUserId);
+                    jsonObject.put("parkingId", parkingId);
+                    jsonObject.put("slotDuration", slotDuration);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Log.e("sending", jsonObject.toString());
+
+                Rx2AndroidNetworking.post(newBookingUrl)
+                        .addJSONObjectBody(jsonObject)
+                        .build()
+                        .getAsJSONObject(new JSONObjectRequestListener() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                final ProgressDialog progressDialog = new ProgressDialog(BookingActivity.this);
+                                progressDialog.setMessage("Fetching your payments.....");
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        progressDialog.dismiss();
+                                        new AlertDialog.Builder(BookingActivity.this)
+                                                .setView(LayoutInflater.from(BookingActivity.this).inflate(R.layout.payment_done, null))
+                                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                                        startActivity(new Intent(BookingActivity.this, ActiveBooking.class));
+                                                    }
+                                                })
+                                                .show();
+                                    }
+                                }, 1500);
+                            }
+
+                            @Override
+                            public void onError(ANError anError) {
+                                //Log.e("new booking", anError.getMessage());
+                                Toast.makeText(BookingActivity.this, "Failed to do bookings, please try again!!", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+            }
+        });
     }
 
     @Override
