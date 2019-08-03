@@ -68,7 +68,7 @@ public class ActiveBooking extends AppCompatActivity implements NavigationView.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_active_booking);
-        setTitle("My Active Booking");
+        setTitle("Active Booking");
         Toolbar toolbar = findViewById(R.id.toolbar2);
         setSupportActionBar(toolbar);
         timer = new Timer();
@@ -331,12 +331,6 @@ public class ActiveBooking extends AppCompatActivity implements NavigationView.O
             startActivity(new Intent(this, HistoryActivity.class));
         } else if (id == R.id.nav_active_booking) {
             //do null
-        } else if (id == R.id.nav_tools) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout2);

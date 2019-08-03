@@ -89,6 +89,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        setTitle("Set Location");
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -177,7 +178,7 @@ public class MainActivity extends AppCompatActivity
                 longitude = location.getLongitude();
                 marker.setPosition(new LatLng(latitude, longitude));
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude)));
-                latLong.setText("Latitude: " + latitude + ", Longitude: " + longitude);
+//                latLong.setText("Latitude: " + latitude + ", Longitude: " + longitude);
                 apiHelper.getParkingNearby(latitude, longitude);
             }
         } catch (IOException e) {
@@ -199,7 +200,7 @@ public class MainActivity extends AppCompatActivity
                             longitude = location.getLongitude();
                             marker.setPosition(new LatLng(latitude, longitude));
                             mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude)));
-                            latLong.setText(latitude+", "+longitude);
+//                            latLong.setText(latitude+", "+longitude);
                             apiHelper.getParkingNearby(latitude, longitude);
                         }else{
                             Log.e("failed to get lat", ":(");
@@ -273,12 +274,6 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(this, HistoryActivity.class));
         } else if (id == R.id.nav_active_booking) {
             startActivity(new Intent(this, ActiveBooking.class));
-        } else if (id == R.id.nav_tools) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -327,7 +322,7 @@ public class MainActivity extends AppCompatActivity
                 System.out.println(latLng.toString());
                 marker.setPosition(latLng);
 //                mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                latLong.setText("Latitude: " + latLng.latitude + ", Longitude: " + latLng.longitude);
+//                latLong.setText("Latitude: " + latLng.latitude + ", Longitude: " + latLng.longitude);
 
                 Geocoder geocoder;
                 List<Address> addresses;
