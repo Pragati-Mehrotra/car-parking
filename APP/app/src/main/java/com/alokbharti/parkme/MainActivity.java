@@ -59,6 +59,7 @@ import java.io.IOException;
 import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static com.alokbharti.parkme.Utilities.GlobalConstants.currentUserId;
 import static com.alokbharti.parkme.Utilities.SavedSharedPreferences.setUserId;
@@ -327,6 +328,19 @@ public class MainActivity extends AppCompatActivity
                 marker.setPosition(latLng);
 //                mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
                 latLong.setText("Latitude: " + latLng.latitude + ", Longitude: " + latLng.longitude);
+
+                Geocoder geocoder;
+                List<Address> addresses;
+                geocoder = new Geocoder(MainActivity.this, Locale.getDefault());
+
+                try {
+                    addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+                    String address = addresses.get(0).getAddressLine(0);
+                    searchAddressEditText.setText(address);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
                 apiHelper.getParkingNearby(latLng.latitude, latLng.longitude);
             }
         });
