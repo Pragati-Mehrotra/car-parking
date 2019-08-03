@@ -1,5 +1,6 @@
 package com.alokbharti.parkme.Adapter;
 
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,9 @@ import com.alokbharti.parkme.Interfaces.RecyclerViewClickListener;
 import com.alokbharti.parkme.Pojo.History;
 import com.alokbharti.parkme.R;
 
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
@@ -36,8 +40,16 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
     public void onBindViewHolder(@NonNull HistoryAdapter.ViewHolder holder, int position) {
         History history = historyList.get(position);
         holder.parkingName.setText(history.getParkingName());
-        holder.status.setText(history.getStatus());
+        String status = history.getStatus();
+        if(status.equals("Cancelled"))
+            holder.status.setTextColor(Color.RED);
+        else if(status.equals("Closed"))
+            holder.status.setTextColor(Color.parseColor("#2e7d32"));
+        holder.status.setText(status);
         holder.bill.setText(String.valueOf(history.getBill()));
+        Date date = new Date(history.getInTime());
+        Format format = new SimpleDateFormat("MMM dd, yyyy HH:mm");
+        holder.time.setText(String.valueOf(format.format(date)));
     }
 
     @Override
@@ -47,13 +59,14 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
-        TextView parkingName,status,bill;
+        TextView parkingName,status,bill,time;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             parkingName = itemView.findViewById(R.id.parkingNameHistory);
             status = itemView.findViewById(R.id.statusHistoy);
             bill = itemView.findViewById(R.id.billHistory);
+            time = itemView.findViewById(R.id.timeHistory);
 
             itemView.setOnClickListener(this);
         }

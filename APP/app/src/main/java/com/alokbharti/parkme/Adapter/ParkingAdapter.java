@@ -41,7 +41,7 @@ public class ParkingAdapter extends RecyclerView.Adapter<ParkingAdapter.ViewHold
         holder.parkingAddress.setText(parkingInfo.getParkingAddress());
         if(parkingInfo.getAvailableSlots() > 0) {
             holder.availableSlots.setText("AVAILABLE");
-            holder.availableSlots.setTextColor(Color.GREEN);
+            holder.availableSlots.setTextColor(Color.parseColor("#2e7d32"));
         }
         else{
             holder.availableSlots.setText("FULL");

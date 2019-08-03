@@ -1,73 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LandingPageActivity"
+    android:background="@color/colorPrimary"
+    android:gravity="center"
     android:orientation="vertical"
-    android:gravity="center">
+    tools:context=".LandingPageActivity">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"/>
+        android:text="Park Me"
+        android:textColor="@android:color/white"
+        android:textSize="36sp" />
 
     <LinearLayout
         android:id="@+id/sign_up_fields"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_margin="20dp">
+        android:layout_margin="20dp"
+        android:orientation="vertical">
+
         <EditText
             android:id="@+id/user_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="UserName"/>
+            android:background="#3F51B5"
+            android:contentDescription="Name"
+            android:hint="Name"
+            android:padding="12dp"
+            android:textColor="@android:color/white"
+            android:textColorHint="@color/colorHint" />
+
         <EditText
             android:id="@+id/user_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="email"
-            android:inputType="textEmailAddress"/>
+            android:layout_marginTop="10dp"
+            android:background="@color/design_default_color_primary"
+            android:hint="Email"
+            android:inputType="textEmailAddress"
+            android:padding="10dp"
+            android:textColor="@android:color/white"
+            android:textColorHint="@color/colorHint" />
     </LinearLayout>
 
     <EditText
         android:id="@+id/user_phone_number"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@color/design_default_color_primary"
         android:hint="phone number"
         android:inputType="number"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"/>
+        android:padding="10dp"
+        android:textColor="@android:color/white"
+        android:textColorHint="@color/colorHint" />
+
     <EditText
         android:id="@+id/user_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Password"
         android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"/>
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="20dp"
+        android:background="@color/design_default_color_primary"
+        android:hint="Password"
+        android:padding="10dp"
+        android:textColor="@android:color/white"
+        android:textColorHint="@color/colorHint" />
 
     <TextView
         android:id="@+id/sign_up_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Sign up"
         android:layout_marginTop="20dp"
-        android:clickable="true"/>
+        android:clickable="true"
+        android:text="Sign up" />
 
     <TextView
         android:id="@+id/sign_in_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="20dp"
         android:clickable="true"
-        android:text="Sign In"
-        android:layout_margin="20dp"/>
+        android:text="Sign In" />
 
     <Button
         android:id="@+id/submit_button"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Submit"/>
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@color/colorAccent"
+        android:text="Submit"
+        android:textColor="@android:color/white" />
 
 </LinearLayout>
