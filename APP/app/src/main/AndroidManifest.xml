@@ -22,7 +22,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".ParkingActivity" />
-        <activity android:name=".ActiveBooking" />
+        <activity android:name=".ActiveBooking"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".HistoryActivity" />
 
         <meta-data

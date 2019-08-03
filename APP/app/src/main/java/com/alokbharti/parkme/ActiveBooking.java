@@ -1,7 +1,11 @@
 package com.alokbharti.parkme;
 
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -10,6 +14,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -20,6 +25,7 @@ import com.alokbharti.parkme.Interfaces.CommonAPIInterface;
 import com.alokbharti.parkme.Utilities.APIHelper;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
+import com.google.android.material.navigation.NavigationView;
 import com.rx2androidnetworking.Rx2AndroidNetworking;
 
 import org.json.JSONException;
@@ -37,7 +43,7 @@ import static com.alokbharti.parkme.Utilities.GlobalConstants.checkoutBookingUrl
 import static com.alokbharti.parkme.Utilities.GlobalConstants.currentUserId;
 import static com.alokbharti.parkme.Utilities.GlobalConstants.parkingDetailsUrl;
 
-public class ActiveBooking extends AppCompatActivity implements CommonAPIInterface {
+public class ActiveBooking extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, CommonAPIInterface {
 
     private TextView noActiveBookingTV;
     private TextView parkingAddress;
@@ -54,6 +60,7 @@ public class ActiveBooking extends AppCompatActivity implements CommonAPIInterfa
     private Button cancelActiveBooking;
 
     boolean isActiveBookings = false;
+    private Timer timer;
 
     private int bookingId;
     @Override
@@ -61,10 +68,17 @@ public class ActiveBooking extends AppCompatActivity implements CommonAPIInterfa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_active_booking);
         setTitle("My Active Booking");
+        Toolbar toolbar = findViewById(R.id.toolbar2);
+        setSupportActionBar(toolbar);
+        timer = new Timer();
 
-        //back button
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout2);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+        navigationView.setNavigationItemSelectedListener(this);
 
         initViews();
         apiHelper = new APIHelper(this);
@@ -141,6 +155,7 @@ public class ActiveBooking extends AppCompatActivity implements CommonAPIInterfa
                     inOtp.setVisibility(View.GONE);
                     outOtp.setVisibility(View.VISIBLE);
                     outOtp.setText(String.format(Locale.ENGLISH,"Out OTP: %d", response.getInt("outOtp")));
+                    setTimerForBookingStatus();
                 }
                 if(status.equals("Booked") || status.equals("CheckedOut")){
                     checkout.setEnabled(false);
@@ -223,7 +238,7 @@ public class ActiveBooking extends AppCompatActivity implements CommonAPIInterfa
     }
 
     private void setTimerForBookingStatus() {
-        new Timer().scheduleAtFixedRate(new TimerTask() {
+        timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
                 apiHelper.getActiveBookingDetails(currentUserId);
@@ -292,18 +307,42 @@ public class ActiveBooking extends AppCompatActivity implements CommonAPIInterfa
     }
 
     @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
+    public void onBackPressed() {
+        super.onBackPressed();
+        DrawerLayout drawer = findViewById(R.id.drawer_layout2);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else if(!isActiveBookings){
+            if(timer!=null) timer.cancel();
+            finish();
+        } else {
+            if(timer!=null) timer.cancel();
+            finishAffinity();
+        }
     }
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        if(!isActiveBookings){
-            finish();
-        }else {
-            finishAffinity();
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.nav_profile) {
+            // Handle the camera action
+            startActivity(new Intent(this,ProfileActivity.class));
+        } else if (id == R.id.nav_history) {
+            startActivity(new Intent(this, HistoryActivity.class));
+        } else if (id == R.id.nav_active_booking) {
+            //do null
+        } else if (id == R.id.nav_tools) {
+
+        } else if (id == R.id.nav_share) {
+
+        } else if (id == R.id.nav_send) {
+
         }
+
+        DrawerLayout drawer = findViewById(R.id.drawer_layout2);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 }

@@ -26,6 +26,11 @@ public class HistoryActivity extends AppCompatActivity implements HistoryInterfa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
+        setTitle("My Bookings");
+
+        //back button
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         historyRecyclerView = findViewById(R.id.historyRecyclerView);
         historyRecyclerView.setHasFixedSize(true);
@@ -56,5 +61,16 @@ public class HistoryActivity extends AppCompatActivity implements HistoryInterfa
     @Override
     public void recyclerViewListClicked(View v, int position) {
 
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 }

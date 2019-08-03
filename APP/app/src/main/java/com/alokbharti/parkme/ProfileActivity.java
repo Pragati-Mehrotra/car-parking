@@ -22,6 +22,12 @@ public class ProfileActivity extends AppCompatActivity implements ProfileInterfa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+        setTitle("My Profile");
+
+        //back button
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
         initViews();
         apiHelper = new APIHelper(this);
         apiHelper.getUserDetails(currentUserId);
@@ -46,5 +52,16 @@ public class ProfileActivity extends AppCompatActivity implements ProfileInterfa
     @Override
     public void onGetProfileInfoFailed() {
         Toast.makeText(this,"Error fetching user", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 }

@@ -1,5 +1,6 @@
 package com.alokbharti.parkme;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
@@ -33,6 +34,7 @@ public class LandingPageActivity extends AppCompatActivity implements AuthInterf
     private boolean signIn = true;
 
     private APIHelper apiHelper;
+    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,11 +42,13 @@ public class LandingPageActivity extends AppCompatActivity implements AuthInterf
         setContentView(R.layout.activity_landing_page);
         initViews();
 
+        progressDialog = new ProgressDialog(this);
         apiHelper = new APIHelper(this);
 
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 String phoneNumber = userPhoneNumber.getText().toString();
                 String password = userPassword.getText().toString();
                 if(TextUtils.isEmpty(userPhoneNumber.getText().toString())){
@@ -55,8 +59,8 @@ public class LandingPageActivity extends AppCompatActivity implements AuthInterf
                     userPassword.setError("This field is compulsory");
                     return;
                 }
-
-
+                progressDialog.setMessage("Loading your details.....");
+                progressDialog.show();
                 if(signIn){
                     Log.e("signIn","call");
                     apiHelper.signInApiCall(phoneNumber, password);
@@ -127,7 +131,14 @@ public class LandingPageActivity extends AppCompatActivity implements AuthInterf
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finishAffinity();
+    }
+
+    @Override
     public void onSignUpSuccessful(int userId) {
+        progressDialog.dismiss();
         setUserId(this, userId, true);
         currentUserId = userId;
         startActivity(new Intent(this, MainActivity.class));
@@ -135,6 +146,7 @@ public class LandingPageActivity extends AppCompatActivity implements AuthInterf
 
     @Override
     public void onSignInSuccessful(int userId) {
+        progressDialog.dismiss();
         setUserId(this, userId, true);
         currentUserId = userId;
         startActivity(new Intent(this, MainActivity.class));
@@ -142,6 +154,7 @@ public class LandingPageActivity extends AppCompatActivity implements AuthInterf
 
     @Override
     public void onAuthFailed() {
+        progressDialog.dismiss();
         Toast.makeText(this, "Authentication failed, try again!!", Toast.LENGTH_SHORT).show();
     }
 }
