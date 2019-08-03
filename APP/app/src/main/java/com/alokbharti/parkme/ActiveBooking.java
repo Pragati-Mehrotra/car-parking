@@ -29,6 +29,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static com.alokbharti.parkme.Utilities.GlobalConstants.cancelBookingUrl;
 import static com.alokbharti.parkme.Utilities.GlobalConstants.checkoutBookingUrl;
@@ -44,10 +46,14 @@ public class ActiveBooking extends AppCompatActivity implements CommonAPIInterfa
     private TextView bookingSlotDuration;
     private TextView activeBookingId;
     private TextView bookingStatus;
+    private TextView inOtp;
+    private TextView outOtp;
     private Button checkout;
     private APIHelper apiHelper;
     private LinearLayout activeBookingsDetails;
     private Button cancelActiveBooking;
+
+    boolean isActiveBookings = false;
 
     private int bookingId;
     @Override
@@ -55,6 +61,10 @@ public class ActiveBooking extends AppCompatActivity implements CommonAPIInterfa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_active_booking);
         setTitle("My Active Booking");
+
+        //back button
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         initViews();
         apiHelper = new APIHelper(this);
@@ -65,6 +75,8 @@ public class ActiveBooking extends AppCompatActivity implements CommonAPIInterfa
         activeBookingId = findViewById(R.id.active_booking_id);
         noActiveBookingTV = findViewById(R.id.no_active_booking_tv);
         parkingAddress = findViewById(R.id.active_booking_parking_address);
+        inOtp = findViewById(R.id.active_booking_in_otp);
+        outOtp = findViewById(R.id.active_booking_out_otp);
         bill = findViewById(R.id.active_booking_bill);
         bookingSlotDuration = findViewById(R.id.active_booking_slot_duration);
         bookingTimeStamp = findViewById(R.id.active_booking_in_time);
@@ -72,6 +84,7 @@ public class ActiveBooking extends AppCompatActivity implements CommonAPIInterfa
         checkout = findViewById(R.id.checkout);
         activeBookingsDetails = findViewById(R.id.active_booking_details);
         cancelActiveBooking = findViewById(R.id.cancel_active_booking);
+
         cancelActiveBooking.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -84,18 +97,21 @@ public class ActiveBooking extends AppCompatActivity implements CommonAPIInterfa
                                 cancelBookingApiCall(bookingId);
                             }
                         })
-                        .setNegativeButton("CANCEL", null);
+                        .setNegativeButton("CANCEL", null)
+                        .show();
             }
         });
     }
 
     @Override
     public void onSuccessfulHit(final JSONObject response) {
-        if(response.length()==0){
+        if(response==null){
             //empty body
+            isActiveBookings = false;
             noActiveBookingTV.setVisibility(View.VISIBLE);
             activeBookingsDetails.setVisibility(View.GONE);
         }else{
+            isActiveBookings = true;
             noActiveBookingTV.setVisibility(View.GONE);
             activeBookingsDetails.setVisibility(View.VISIBLE);
 
@@ -106,6 +122,7 @@ public class ActiveBooking extends AppCompatActivity implements CommonAPIInterfa
                 getParkingDetails(parkingId);
                 bill.setText(String.format("Total Bill: %s", String.valueOf(response.getDouble("bill"))));
                 bookingSlotDuration.setText(String.format("Booking slot duration: %s", String.valueOf(response.getInt("slotDuration"))));
+                inOtp.setText(String.format("inOtp: %d",response.getInt("inOtp")));
 
                 DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
                 long inTimeStamp = response.getLong("inTime");
@@ -113,7 +130,21 @@ public class ActiveBooking extends AppCompatActivity implements CommonAPIInterfa
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTimeInMillis(inTimeStamp);
                 bookingTimeStamp.setText(String.format("Booking time: %s", formatter.format(calendar.getTime())));
-                bookingStatus.setText(String.format("Booking status: %s", response.getString("status")));
+                String status = response.getString("status");
+                bookingStatus.setText(String.format("Booking status: %s", status));
+                if(status.equals("Booked")){
+                    cancelActiveBooking.setEnabled(true);
+                }else{
+                    cancelActiveBooking.setEnabled(false);
+                }
+                if(status.equals("CheckedOut")){
+                    inOtp.setVisibility(View.GONE);
+                    outOtp.setVisibility(View.VISIBLE);
+                    outOtp.setText(String.format(Locale.ENGLISH,"Out OTP: %d", response.getInt("outOtp")));
+                }
+                if(status.equals("Booked") || status.equals("CheckedOut")){
+                    checkout.setEnabled(false);
+                }
                 checkout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -172,11 +203,9 @@ public class ActiveBooking extends AppCompatActivity implements CommonAPIInterfa
                                 public void onClick(View view) {
                                     Toast.makeText(ActiveBooking.this, "Your Booking status will be updated. Thanks for booking with us :)", Toast.LENGTH_SHORT).show();
                                     alertDialog.dismiss();
+                                    apiHelper.getActiveBookingDetails(currentUserId);
 
-                                    Intent intent = new Intent(ActiveBooking.this, MainActivity.class);
-                                    //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    startActivity(intent);
-                                    finish();
+                                    setTimerForBookingStatus();
                                 }
                             });
                         } catch (JSONException e) {
@@ -191,6 +220,15 @@ public class ActiveBooking extends AppCompatActivity implements CommonAPIInterfa
                     }
                 });
 
+    }
+
+    private void setTimerForBookingStatus() {
+        new Timer().scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                apiHelper.getActiveBookingDetails(currentUserId);
+            }
+        },0, 5000);
     }
 
     @Override
@@ -254,9 +292,18 @@ public class ActiveBooking extends AppCompatActivity implements CommonAPIInterfa
     }
 
     @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
+    @Override
     public void onBackPressed() {
         super.onBackPressed();
-        startActivity(new Intent(this, MainActivity.class));
-        finish();
+        if(!isActiveBookings){
+            finish();
+        }else {
+            finishAffinity();
+        }
     }
 }

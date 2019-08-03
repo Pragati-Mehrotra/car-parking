@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity
 //        parkingRecyclerView = findViewById(R.id.parkingRecyclerView);
 //        parkingRecyclerView.setHasFixedSize(true);
 //        parkingRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        //locationButton = findViewById(R.id.locateButton);
+        locationButton = findViewById(R.id.locationButton);
         searchAddressButton = findViewById(R.id.search_address_button);
         searchAddressEditText = findViewById(R.id.location_search_edit_text);
         searchAddressEditText.setOnKeyListener(new View.OnKeyListener() {
@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             }
         });
-        /*locationButton.setOnClickListener(new View.OnClickListener() {
+        locationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity
                     getparkinglistFromGPS();
                 }
             }
-        });*/
+        });
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         final SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -320,5 +320,15 @@ public class MainActivity extends AppCompatActivity
                 .title("Bike current location"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         mMap.setMinZoomPreference(13.0f);
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                System.out.println(latLng.toString());
+                marker.setPosition(latLng);
+//                mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                latLong.setText("Latitude: " + latLng.latitude + ", Longitude: " + latLng.longitude);
+                apiHelper.getParkingNearby(latLng.latitude, latLng.longitude);
+            }
+        });
     }
 }

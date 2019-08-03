@@ -14,8 +14,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ParkingActivity"></activity>
-        <activity android:name=".ActiveBooking"></activity>
+        <activity android:name=".SplashScreenActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".ParkingActivity" />
+        <activity android:name=".ActiveBooking" />
         <activity android:name=".HistoryActivity" />
 
         <meta-data
@@ -24,13 +31,7 @@
 
         <activity android:name=".BookingActivity" />
         <activity android:name=".ProfileActivity" />
-        <activity android:name=".LandingPageActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".LandingPageActivity"/>
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"

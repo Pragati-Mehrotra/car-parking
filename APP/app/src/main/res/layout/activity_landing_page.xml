@@ -1,73 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LandingPageActivity"
+    android:gravity="center"
     android:orientation="vertical"
-    android:gravity="center">
+    tools:context=".LandingPageActivity">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"/>
+        android:text="Park Me"
+        android:textColor="@android:color/black"
+        android:textSize="36sp" />
 
     <LinearLayout
         android:id="@+id/sign_up_fields"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_margin="20dp">
+        android:layout_margin="20dp"
+        android:orientation="vertical">
+
         <EditText
             android:id="@+id/user_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="UserName"/>
+            android:background="@drawable/rounded_edittext"
+            android:contentDescription="Name"
+            android:elevation="3dp"
+            android:hint="Name"
+            android:padding="12dp"
+            android:textColor="@android:color/black"
+            android:textColorHint="@android:color/white" />
+
         <EditText
             android:id="@+id/user_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="email"
-            android:inputType="textEmailAddress"/>
+            android:layout_marginTop="10dp"
+            android:background="@drawable/rounded_edittext"
+            android:hint="Email"
+            android:inputType="textEmailAddress"
+            android:padding="10dp"
+            android:textColor="@android:color/black"
+            android:textColorHint="@android:color/white"
+            android:elevation="3dp"/>
     </LinearLayout>
 
     <EditText
         android:id="@+id/user_phone_number"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="phone number"
-        android:inputType="number"
         android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"/>
+        android:layout_marginRight="20dp"
+        android:background="@drawable/rounded_edittext"
+        android:elevation="3dp"
+        android:hint="Phone number"
+        android:inputType="number"
+        android:padding="10dp"
+        android:textColor="@android:color/black"
+        android:textColorHint="@android:color/white" />
+
     <EditText
         android:id="@+id/user_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Password"
         android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"/>
-
-    <TextView
-        android:id="@+id/sign_up_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Sign up"
-        android:layout_marginTop="20dp"
-        android:clickable="true"/>
-
-    <TextView
-        android:id="@+id/sign_in_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:text="Sign In"
-        android:layout_margin="20dp"/>
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="20dp"
+        android:background="@drawable/rounded_edittext"
+        android:hint="Password"
+        android:padding="10dp"
+        android:textColor="@android:color/black"
+        android:textColorHint="@android:color/white"
+        android:elevation="3dp"/>
 
     <Button
         android:id="@+id/submit_button"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Submit"/>
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@drawable/roundedbutton"
+        android:text="Login"
+        android:textColor="@android:color/white"
+        android:elevation="3dp"/>
+
+    <TextView
+        android:id="@+id/authTypeSwitch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:autoLink="all"
+        android:text="Not a member? Sign up"
+        android:textAlignment="center"
+        android:textColor="@color/colorPrimary"
+        android:elevation="3dp"/>
 
 </LinearLayout>

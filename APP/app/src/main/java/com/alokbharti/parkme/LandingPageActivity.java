@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,13 +23,13 @@ import static com.alokbharti.parkme.Utilities.SavedSharedPreferences.setUserId;
 
 public class LandingPageActivity extends AppCompatActivity implements AuthInterface {
 
-
     private EditText userName;
     private EditText userPhoneNumber;
     private EditText userEmailId;
     private EditText userPassword;
     private LinearLayout signUpField;
     private Button submitButton;
+    private TextView authTypeSwitch;
     private boolean signIn = true;
 
     private APIHelper apiHelper;
@@ -37,13 +38,6 @@ public class LandingPageActivity extends AppCompatActivity implements AuthInterf
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing_page);
-
-        if(getSignInStatus(LandingPageActivity.this)){
-            currentUserId = getUserId(LandingPageActivity.this);
-            Intent intent = new Intent(LandingPageActivity.this, MainActivity.class);
-            startActivity(intent);
-        }
-
         initViews();
 
         apiHelper = new APIHelper(this);
@@ -92,22 +86,40 @@ public class LandingPageActivity extends AppCompatActivity implements AuthInterf
         userPhoneNumber = findViewById(R.id.user_phone_number);
         signUpField = findViewById(R.id.sign_up_fields);
         submitButton = findViewById(R.id.submit_button);
-        TextView signInTextView = findViewById(R.id.sign_in_tv);
-        TextView signUpTextView = findViewById(R.id.sign_up_tv);
+        authTypeSwitch = findViewById(R.id.authTypeSwitch);
+//        TextView signInTextView = findViewById(R.id.sign_in_tv);
+//        TextView signUpTextView = findViewById(R.id.sign_up_tv);
 
         signUpField.setVisibility(View.GONE);
-        signInTextView.setOnClickListener(new View.OnClickListener() {
+//        signInTextView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                signIn = true;
+//                signUpField.setVisibility(View.GONE);
+//            }
+//        });
+//        signUpTextView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                signIn = false;
+//                signUpField.setVisibility(View.VISIBLE);
+//            }
+//        });
+
+        authTypeSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                signIn = true;
-                signUpField.setVisibility(View.GONE);
-            }
-        });
-        signUpTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                signIn = false;
-                signUpField.setVisibility(View.VISIBLE);
+            public void onClick(View v) {
+                signIn = !signIn;
+                if(signIn){
+                    signUpField.setVisibility(View.GONE);
+                    submitButton.setText("Login");
+                    authTypeSwitch.setText("Not a user? Sign up");
+                }
+                else{
+                    signUpField.setVisibility(View.VISIBLE);
+                    submitButton.setText("Sign up");
+                    authTypeSwitch.setText("Already registered? Log in");
+                }
             }
         });
 

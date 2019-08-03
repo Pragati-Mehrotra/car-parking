@@ -16,5 +16,6 @@ public class GlobalConstants {
     public static String driveOutParkingUrl = BASE_URL+"parking/driveOut";
     public static String registerParkingUrl = BASE_URL+"parking/register";
     public static String parkingDetailsUrl = BASE_URL+"parking/details";
+    public static String bookingBillUrl = BASE_URL+"booking/bill";
     public static int radius = 5000;
 }

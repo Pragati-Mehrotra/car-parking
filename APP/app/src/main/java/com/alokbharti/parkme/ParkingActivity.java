@@ -28,6 +28,8 @@ public class ParkingActivity extends AppCompatActivity implements LocationInterf
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_parking);
+        setTitle("Nearby Parkings");
+
 
         apiHelper = new APIHelper(this);
         parkingRecyclerView = findViewById(R.id.parkingRecyclerView2);
@@ -60,7 +62,9 @@ public class ParkingActivity extends AppCompatActivity implements LocationInterf
         ParkingInfo parkingInfo = parkingList.get(position);
         Intent intent = new Intent(this, BookingActivity.class);
         intent.putExtra("parking_id", parkingInfo.getParkingId());
+        intent.putExtra("parking_name", parkingInfo.getParkingName());
         intent.putExtra("parking_address", parkingInfo.getParkingAddress());
+        intent.putExtra("slots_available", parkingInfo.getAvailableSlots());
         startActivity(intent);
     }
 }
