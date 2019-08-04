@@ -30,6 +30,9 @@ public class ParkingActivity extends AppCompatActivity implements LocationInterf
         setContentView(R.layout.activity_parking);
         setTitle("Nearby Parkings");
 
+        //back button
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         apiHelper = new APIHelper(this);
         parkingRecyclerView = findViewById(R.id.parkingRecyclerView2);
@@ -66,5 +69,16 @@ public class ParkingActivity extends AppCompatActivity implements LocationInterf
         intent.putExtra("parking_address", parkingInfo.getParkingAddress());
         intent.putExtra("slots_available", parkingInfo.getAvailableSlots());
         startActivity(intent);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 }

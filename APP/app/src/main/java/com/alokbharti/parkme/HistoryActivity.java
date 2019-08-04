@@ -26,7 +26,7 @@ public class HistoryActivity extends AppCompatActivity implements HistoryInterfa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
-        setTitle("My Bookings");
+        setTitle("Previous Bookings");
 
         //back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
