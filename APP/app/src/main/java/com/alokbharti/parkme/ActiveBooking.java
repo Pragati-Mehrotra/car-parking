@@ -322,12 +322,16 @@ public class ActiveBooking extends AppCompatActivity implements NavigationView.O
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else if(!isActiveBookings){
-            if(timer!=null) timer.cancel();
             finish();
         } else {
-            if(timer!=null) timer.cancel();
             finishAffinity();
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(timer!=null) timer.cancel();
     }
 
     @Override
