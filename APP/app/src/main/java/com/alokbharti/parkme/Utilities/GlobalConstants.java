@@ -18,4 +18,5 @@ public class GlobalConstants {
     public static String parkingDetailsUrl = BASE_URL+"parking/details";
     public static String bookingBillUrl = BASE_URL+"booking/bill";
     public static int radius = 5000;
+    public static double currentLatitude=0, currentLongitude=0;
 }

@@ -74,4 +74,8 @@ public class ParkingInfo {
     public void setAvailableSlots(int availableSlots) {
         this.availableSlots = availableSlots;
     }
+
+    public void getDistanceFromCurrentLocation(){
+
+    }
 }

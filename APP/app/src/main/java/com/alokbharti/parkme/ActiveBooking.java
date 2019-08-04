@@ -61,6 +61,7 @@ public class ActiveBooking extends AppCompatActivity implements NavigationView.O
     private Button cancelActiveBooking;
 
     boolean isActiveBookings = false;
+    boolean isTimerScheduled = false;
     private Timer timer;
 
     private int bookingId;
@@ -79,7 +80,7 @@ public class ActiveBooking extends AppCompatActivity implements NavigationView.O
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-//        navigationView.setNavigationItemSelectedListener(this);
+        navigationView.setNavigationItemSelectedListener(this);
 
         initViews();
         apiHelper = new APIHelper(this);
@@ -122,9 +123,10 @@ public class ActiveBooking extends AppCompatActivity implements NavigationView.O
     public void onSuccessfulHit(final JSONObject response) {
         if(response==null){
             //empty body
+            Log.e("In response"," null");
+            activeBookingsDetails.setVisibility(View.GONE);
             isActiveBookings = false;
             noActiveBookingTV.setVisibility(View.VISIBLE);
-            activeBookingsDetails.setVisibility(View.GONE);
         }else{
             isActiveBookings = true;
             noActiveBookingTV.setVisibility(View.GONE);
@@ -148,15 +150,21 @@ public class ActiveBooking extends AppCompatActivity implements NavigationView.O
                 String status = response.getString("status");
                 bookingStatus.setText(status.toUpperCase());
                 if(status.equals("Parked"))checkout.setVisibility(View.VISIBLE); else checkout.setVisibility(View.GONE);
-                if(status.equals("Booked")) cancelActiveBooking.setVisibility(View.VISIBLE); else  cancelActiveBooking.setVisibility(View.GONE);
+                if(status.equals("Booked")){
+                    cancelActiveBooking.setVisibility(View.VISIBLE);
+                    setTimerForBookingStatus();
+                }
+                else  cancelActiveBooking.setVisibility(View.GONE);
                 if(status.equals("CheckedOut")){
-                    inOtp.setVisibility(View.GONE);
-                    outOtp.setVisibility(View.VISIBLE);
-                    outOtp.setText(String.format(Locale.ENGLISH,"Out OTP: %d", response.getInt("outOtp")));
+//                    inOtp.setVisibility(View.GONE);
+//                    outOtp.setVisibility(View.VISIBLE);
+                    outOtp.setText(String.valueOf(response.getInt("outOtp")));
                     setTimerForBookingStatus();
                 }
                 if(status.equals("Booked") || status.equals("CheckedOut")){
                     checkout.setEnabled(false);
+                }else{
+                    checkout.setEnabled(true);
                 }
                 checkout.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -236,12 +244,15 @@ public class ActiveBooking extends AppCompatActivity implements NavigationView.O
     }
 
     private void setTimerForBookingStatus() {
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                apiHelper.getActiveBookingDetails(currentUserId);
-            }
-        },0, 5000);
+        if(!isTimerScheduled) {
+            timer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    apiHelper.getActiveBookingDetails(currentUserId);
+                }
+            }, 0, 5000);
+            isTimerScheduled = true;
+        }
     }
 
     @Override

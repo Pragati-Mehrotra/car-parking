@@ -101,6 +101,7 @@
         android:background="@drawable/rounded_edittext"
         android:hint="Password"
         android:padding="10dp"
+        android:inputType="textPassword"
         android:textColor="@android:color/black"
         android:textColorHint="@android:color/white"
         android:elevation="3dp"/>

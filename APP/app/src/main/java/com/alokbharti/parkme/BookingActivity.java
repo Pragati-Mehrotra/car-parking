@@ -145,50 +145,51 @@ public class BookingActivity extends AppCompatActivity implements JSONArrayAPIIn
                 if(!googlePayRadioButton.isChecked() && !phonePayRadioButton.isChecked() && !paytmRadioButton.isChecked()){
                     Toast.makeText(BookingActivity.this, "Select atleast one payment method to proceed with current bookings!!", Toast.LENGTH_SHORT).show();
                     return;
+                } else {
+
+                    JSONObject jsonObject = new JSONObject();
+
+                    try {
+                        jsonObject.put("userId", currentUserId);
+                        jsonObject.put("parkingId", parkingId);
+                        jsonObject.put("slotDuration", slotDuration);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Log.e("sending", jsonObject.toString());
+
+                    Rx2AndroidNetworking.post(newBookingUrl)
+                            .addJSONObjectBody(jsonObject)
+                            .build()
+                            .getAsJSONObject(new JSONObjectRequestListener() {
+                                @Override
+                                public void onResponse(JSONObject response) {
+                                    final ProgressDialog progressDialog = new ProgressDialog(BookingActivity.this);
+                                    progressDialog.setMessage("Fetching your payments.....");
+                                    new Handler().postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            progressDialog.dismiss();
+                                            new AlertDialog.Builder(BookingActivity.this)
+                                                    .setView(LayoutInflater.from(BookingActivity.this).inflate(R.layout.payment_done, null))
+                                                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                                            startActivity(new Intent(BookingActivity.this, ActiveBooking.class));
+                                                        }
+                                                    })
+                                                    .show();
+                                        }
+                                    }, 1500);
+                                }
+
+                                @Override
+                                public void onError(ANError anError) {
+                                    //Log.e("new booking", anError.getMessage());
+                                    Toast.makeText(BookingActivity.this, "Failed to do bookings, please try again!!", Toast.LENGTH_SHORT).show();
+                                }
+                            });
                 }
-
-                JSONObject jsonObject = new JSONObject();
-
-                try {
-                    jsonObject.put("userId", currentUserId);
-                    jsonObject.put("parkingId", parkingId);
-                    jsonObject.put("slotDuration", slotDuration);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                Log.e("sending", jsonObject.toString());
-
-                Rx2AndroidNetworking.post(newBookingUrl)
-                        .addJSONObjectBody(jsonObject)
-                        .build()
-                        .getAsJSONObject(new JSONObjectRequestListener() {
-                            @Override
-                            public void onResponse(JSONObject response) {
-                                final ProgressDialog progressDialog = new ProgressDialog(BookingActivity.this);
-                                progressDialog.setMessage("Fetching your payments.....");
-                                new Handler().postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        progressDialog.dismiss();
-                                        new AlertDialog.Builder(BookingActivity.this)
-                                                .setView(LayoutInflater.from(BookingActivity.this).inflate(R.layout.payment_done, null))
-                                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                                        startActivity(new Intent(BookingActivity.this, ActiveBooking.class));
-                                                    }
-                                                })
-                                                .show();
-                                    }
-                                }, 1500);
-                            }
-
-                            @Override
-                            public void onError(ANError anError) {
-                                //Log.e("new booking", anError.getMessage());
-                                Toast.makeText(BookingActivity.this, "Failed to do bookings, please try again!!", Toast.LENGTH_SHORT).show();
-                            }
-                        });
             }
         });
     }
