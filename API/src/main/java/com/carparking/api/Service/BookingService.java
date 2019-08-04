@@ -120,14 +120,34 @@ public class BookingService implements IBookingService {
     public History cancelBooking(Integer bookingId) {
         Booking booking = bookingRepository.findByBookingId(bookingId);
         Parking parking = parkingRepository.findByParkingId(booking.getParkingId());
+        User user = userRepository.findByUserId(booking.getUserId());
         History history = new History();
         history.setBookingId(booking.getBookingId());
         history.setParkingId(booking.getParkingId());
         history.setUserId(booking.getUserId());
-        history.setBill(booking.getBill());
         history.setStatus("Cancelled");
         history.setInTime(booking.getInTime());
-        history.setOutTime(booking.getOutTime());
+        Date date = new Date();
+        Long cancellationTime = date.getTime();
+        Long duration = (cancellationTime - history.getInTime()) / 3600000;
+        Double bill;
+        if (duration <= 2) {
+            bill = (double)40;
+        }
+        else if (duration > 2 && duration <= 4) {
+            bill = (double)60;
+        }
+        else if (duration > 4 && duration <=8) {
+            bill = (double)80;
+        }
+        else {
+            bill = (double)(80 + (duration-8)*20);
+        }
+        history.setBill(bill);
+        Integer balance = (int)(user.getBalance() - bill);
+        user.setBalance(balance);
+        User savedUser = userCrudRepository.save(user);
+        history.setOutTime(cancellationTime);
         history.setSlotDuration(booking.getSlotDuration());
         History savedHistory = historyCrudRepository.save(history);
         bookingCrudRepository.deleteById(bookingId);

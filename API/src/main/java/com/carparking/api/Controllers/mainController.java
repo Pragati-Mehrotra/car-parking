@@ -206,9 +206,8 @@ public class mainController {
                 "<body>\n" +
                 "  <div>\n" +
                 "    <div style=\"text-align:center; margin-top: 20px;\">\n" +
-                "        <img src=\"https://github.com/jainsomya972/car-parking/blob/master/API/src/assets/logo.png?raw=true\">\n" +
+                "        <img style=\"height: 200px; width: 200px\"  src=\"https://github.com/jainsomya972/car-parking/blob/master/API/src/assets/ParkMeLogo.jpeg?raw=true\">\n" +
                 "    </div> \n" +
-                "    <h1 style=\"text-align:center; margin: 0px\">Welcome to ParkMe</h1>\n" +
                 "    <h6 style=\"text-align:center; margin: 40px;\">Please enter the Parking Id and Entry OTP to open the gate.</h6>\n" +
                 "    <div style=\"display: flex; justify-content: center; margin: 20px;\">\n" +
                 "      <label>Enter Parking Id:  </label>\n" +
@@ -267,10 +266,9 @@ public class mainController {
                 "</head>\n" +
                 "<body>\n" +
                 "  <div>\n" +
-                "    <div style=\"text-align:center; margin-top: 20px;\">\n" +
-                "        <img src=\"https://github.com/jainsomya972/car-parking/blob/master/API/src/assets/logo.png?raw=true\">\n" +
+                "    <div style=\"text-align:center; margin-top: 20px; \">\n" +
+                "        <img style=\"height: 200px; width: 200px\" src=\"https://github.com/jainsomya972/car-parking/blob/master/API/src/assets/ParkMeLogo.jpeg?raw=true\">\n" +
                 "    </div> \n" +
-                "    <h1 style=\"text-align:center\">Welcome to ParkMe</h1>\n" +
                 "    <h6 style=\"text-align:center; margin: 40px;\">Please enter the Parking Id and Exit OTP to open the gate.</h6>\n" +
                 "    <div style=\"display: flex; justify-content: center; margin: 20px;\">\n" +
                 "      <label>Enter Parking Id:  </label>\n" +
